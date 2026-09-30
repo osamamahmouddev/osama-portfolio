@@ -1251,77 +1251,208 @@
       color: var(--accent-cyan);
     }
 
-    /* PROJECTS SECTION */
+    /* PROJECTS SECTION (APP SHOWCASE) */
     .projects-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 28px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 26px;
     }
 
     .project-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-xl);
-      padding: 32px;
+      background: #12151c;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 28px;
+      padding: 36px 24px 28px;
       display: flex;
       flex-direction: column;
-      transition: var(--transition);
-      backdrop-filter: blur(12px);
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.35s ease;
       position: relative;
       overflow: hidden;
+      backdrop-filter: blur(12px);
+      min-height: 380px;
     }
 
-    .project-card::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
-      opacity: 0;
-      transition: var(--transition);
+    [data-theme="light"] .project-card {
+      background: #ffffff;
+      border-color: #e2e8f0;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
     }
 
     .project-card:hover {
-      border-color: var(--border-bright);
-      transform: translateY(-6px);
-      box-shadow: var(--shadow-card), var(--shadow-glow);
+      border-color: rgba(255, 255, 255, 0.22);
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
     }
 
-    .project-card:hover::after {
-      opacity: 1;
+    [data-theme="light"] .project-card:hover {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 20px 40px -10px rgba(2, 132, 199, 0.18);
     }
 
-    .project-top {
+    .app-icon-wrapper {
+      width: 82px;
+      height: 82px;
+      border-radius: 22px;
       display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 16px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.45);
+      position: relative;
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+      overflow: hidden;
+      background: #181c25;
     }
 
-    .project-category {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: var(--accent-cyan);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+    .app-icon-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 22px;
     }
 
-    .project-title {
-      font-size: 1.35rem;
+    .project-card:hover .app-icon-wrapper {
+      transform: scale(1.06);
+    }
+
+    .app-title {
+      font-size: 1.25rem;
       font-weight: 700;
-      margin-top: 4px;
-      color: var(--text-primary);
+      color: #ffffff;
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+      line-height: 1.35;
     }
 
-    .project-title span.ar-title {
-      font-size: 1rem;
-      color: var(--text-secondary);
-      font-weight: 400;
-      margin-left: 6px;
+    [data-theme="light"] .app-title {
+      color: #0f172a;
+    }
+
+    .app-title .ar-title {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--accent-cyan);
+      margin-inline-start: 4px;
+    }
+
+    .app-desc {
+      font-size: 0.86rem;
+      color: #94a3b8;
+      line-height: 1.55;
+      margin-bottom: 20px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 95%;
+    }
+
+    [data-theme="light"] .app-desc {
+      color: #64748b;
+    }
+
+    .app-badge-area {
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .app-type-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 14px;
+      border-radius: 9999px;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: rgba(234, 88, 12, 0.12);
+      border: 1px solid rgba(234, 88, 12, 0.35);
+      color: #f97316;
+    }
+
+    .app-playstore-icon, .app-apple-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    .app-playstore-icon {
+      background-image: url('google-play-DuJo8FUJ.webp');
+    }
+
+    .app-apple-icon {
+      background-image: url('app-store-enkHVtkq.webp');
+    }
+
+    .app-playstore-icon path, .app-apple-icon path {
+      display: none;
+    }
+
+    [data-theme="light"] .app-apple-icon {
+      color: #0f172a;
+    }
+
+    .app-playstore-icon:hover, .app-apple-icon:hover {
+      transform: scale(1.18);
+    }
+
+    .btn-view-details {
+      background: #171b24;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #e2e8f0;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 9px 26px;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    [data-theme="light"] .btn-view-details {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+
+    .btn-view-details:hover {
+      background: #232836;
+      border-color: var(--accent-cyan);
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 18px rgba(0, 245, 212, 0.25);
+    }
+
+    [data-theme="light"] .btn-view-details:hover {
+      background: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+      color: #ffffff;
+      box-shadow: 0 4px 18px rgba(2, 132, 199, 0.3);
     }
 
     .project-badge-status {
@@ -1333,13 +1464,6 @@
       border: 1px solid rgba(16, 185, 129, 0.3);
       color: var(--accent-green);
       white-space: nowrap;
-    }
-
-    .project-desc {
-      font-size: 0.94rem;
-      color: var(--text-secondary);
-      line-height: 1.65;
-      margin-bottom: 20px;
     }
 
     .project-highlights {
@@ -1356,22 +1480,19 @@
       position: relative;
       padding-left: 18px;
     }
+    [dir="rtl"] .project-highlights li {
+      padding-left: 0;
+      padding-right: 18px;
+    }
     .project-highlights li::before {
       content: '✓';
       position: absolute;
       left: 0;
       color: var(--accent-cyan);
     }
-
-    .project-footer {
-      margin-top: auto;
-      padding-top: 20px;
-      border-top: 1px solid var(--border-subtle);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 14px;
+    [dir="rtl"] .project-highlights li::before {
+      left: auto;
+      right: 0;
     }
 
     .project-tech-pills {
@@ -1390,19 +1511,13 @@
       color: var(--text-secondary);
     }
 
-    .project-links {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
     .store-btn {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       font-family: var(--font-mono);
       font-size: 0.75rem;
-      padding: 6px 12px;
+      padding: 8px 14px;
       border-radius: var(--radius-sm);
       background: rgba(56, 189, 248, 0.1);
       border: 1px solid rgba(56, 189, 248, 0.3);
@@ -1422,6 +1537,30 @@
       color: #060D1A;
       transform: translateY(-2px);
     }
+
+    .store-btn[href*="apps.apple.com"]::before,
+    .store-btn[href*="play.google.com"]::before {
+      content: "";
+      width: 22px;
+      height: 22px;
+      flex: 0 0 22px;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+    }
+
+    .store-btn[href*="apps.apple.com"]::before {
+      background-image: url('app-store-enkHVtkq.webp');
+    }
+
+    .store-btn[href*="play.google.com"]::before {
+      background-image: url('google-play-DuJo8FUJ.webp');
+    }
+
+    .store-btn svg {
+      display: none;
+    }
+
     [data-theme="light"] .store-btn:hover {
       color: #FFFFFF;
     }
@@ -1998,10 +2137,6 @@
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .modal-backdrop.open .modal-content {
-      transform: scale(1);
-    }
-
     .modal-header {
       padding: 18px 24px;
       border-bottom: 1px solid var(--border-subtle);
@@ -2035,7 +2170,11 @@
       flex: 1;
       padding: 0;
       min-height: 520px;
-      background: #0D1B2A;
+      background: var(--bg-surface);
+    }
+
+    [data-theme="light"] .modal-backdrop {
+      background: rgba(15, 23, 42, 0.42);
     }
 
     .modal-body iframe {
@@ -2043,6 +2182,54 @@
       height: 100%;
       min-height: 550px;
       border: none;
+    }
+
+    /* MODAL SCREENSHOTS TRACK */
+    .modal-screenshots-track {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding: 6px 4px 14px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .modal-screenshots-track::-webkit-scrollbar {
+      height: 6px;
+    }
+    .modal-screenshots-track::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+    }
+    [data-theme="light"] .modal-screenshots-track::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.06);
+    }
+    .modal-screenshots-track::-webkit-scrollbar-thumb {
+      background: var(--accent-cyan);
+      border-radius: 10px;
+    }
+    .modal-screenshot-item {
+      flex-shrink: 0;
+      scroll-snap-align: start;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      cursor: pointer;
+      background: var(--bg-surface-elevated);
+      position: relative;
+    }
+    .modal-screenshot-item:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 12px 28px rgba(0, 245, 212, 0.22);
+      border-color: var(--accent-cyan);
+    }
+    .modal-screenshot-item img {
+      height: 250px;
+      width: auto;
+      max-width: 170px;
+      display: block;
+      object-fit: cover;
     }
 
     /* TOAST NOTIFICATION */
@@ -2144,7 +2331,7 @@
         grid-template-columns: repeat(2, 1fr);
       }
       .projects-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
       }
       .articles-grid {
         grid-template-columns: 1fr;
@@ -2155,42 +2342,225 @@
     }
 
     @media (max-width: 768px) {
-      .nav-menu {
+      .container {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .nav-container {
+        height: 64px;
+        gap: 8px;
+      }
+
+      .brand-logo {
+        min-width: 0;
+        flex: 1 1 auto;
+        gap: 8px;
+        font-size: 0.9rem;
+      }
+
+      .brand-logo > div:last-child {
+        min-width: 0;
+      }
+
+      .brand-logo > div:last-child > span,
+      .brand-logo .brand-tag {
+        display: block;
+        max-width: 118px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .nav-actions {
+        flex: 0 0 auto;
+        gap: 6px;
+      }
+
+      .lang-toggle-btn {
+        width: 58px;
+        padding: 0 6px;
+        font-size: 0.7rem;
+      }
+
+      .btn-cv {
+        padding-left: 10px;
+        padding-right: 10px;
+        font-size: 0.7rem;
+      }
+
+      .btn-cv svg {
         display: none;
-        position: absolute;
-        top: 74px;
+      }
+
+      .mobile-menu-btn {
+        width: 34px;
+        height: 40px;
+        padding: 4px;
+        font-size: 1.35rem;
+      }
+
+      nav.nav-menu {
+        display: none;
+        position: fixed;
+        top: 64px;
         left: 0;
         right: 0;
+        width: 100%;
+        max-height: calc(100dvh - 64px);
+        overflow-y: auto;
         background: var(--bg-surface);
+        background: color-mix(in srgb, var(--bg-surface) 96%, transparent);
+        backdrop-filter: blur(18px);
         border-bottom: 1px solid var(--border-subtle);
         flex-direction: column;
-        padding: 24px;
-        gap: 20px;
+        padding: 18px 16px 24px;
+        gap: 8px;
+        z-index: 110;
       }
+
+      nav.nav-menu a {
+        width: 100%;
+        padding: 13px 10px;
+        text-align: center;
+      }
+
       .nav-menu.open {
         display: flex;
       }
+
       .mobile-menu-btn {
         display: block;
       }
+
+      .hero-section {
+        padding: 52px 0 40px;
+      }
+
+      .hero-grid {
+        gap: 32px;
+      }
+
+      .hero-title {
+        font-size: clamp(2rem, 10vw, 3rem);
+      }
+
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+
       .skills-cards-grid {
         grid-template-columns: 1fr;
       }
+
+      .projects-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .project-card {
+        min-width: 0;
+        min-height: 0;
+        padding: 28px 20px 24px;
+      }
+
+      .section-header {
+        margin-bottom: 28px;
+      }
+
+      .section-title {
+        font-size: clamp(1.8rem, 8vw, 2.6rem);
+      }
+
       .timeline-container {
         padding-left: 24px;
       }
+
       .timeline-dot {
         left: -24px;
       }
+
       .contact-card-main {
         padding: 32px 20px;
       }
+
+      .contact-card-main p {
+        font-size: 0.98rem;
+      }
+
       .cv-banner {
-        padding: 28px;
+        padding: 28px 20px;
+      }
+
+      .modal-backdrop {
+        padding: 10px;
+      }
+
+      .modal-content {
+        max-height: calc(100dvh - 20px);
+        border-radius: 16px;
+      }
+
+      .modal-header {
+        padding: 14px 16px;
+      }
+
+      .modal-header h3 {
+        min-width: 0;
+        font-size: 0.95rem;
+      }
+
+      .modal-body {
+        min-height: 0;
+      }
+
+      .modal-screenshots-track {
+        gap: 10px;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      .modal-screenshot-item img {
+        height: min(58vw, 250px);
+        max-width: 42vw;
       }
     }
 
     @media (max-width: 480px) {
+      .container {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .brand-logo .logo-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 1rem;
+      }
+
+      .brand-logo > div:last-child > span,
+      .brand-logo .brand-tag {
+        max-width: 92px;
+      }
+
+      .lang-toggle-btn {
+        width: 46px;
+        font-size: 0;
+      }
+
+      .lang-toggle-btn #langIcon {
+        font-size: 0.95rem;
+      }
+
+      .theme-toggle-btn {
+        width: 36px;
+      }
+
+      .btn-cv {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+
       .stats-grid {
         grid-template-columns: 1fr;
       }
@@ -2752,214 +3122,144 @@
       </div>
 
       <div class="projects-grid">
-        <!-- Project 1: Haseem -->
+        <!-- App 1: Haseem -->
         <div class="project-card reveal">
-          <div class="project-top">
-            <div>
-              <span class="project-category">FinTech · Cloud Invoicing</span>
-              <h3 class="project-title">Haseem <span class="ar-title">(حسيم)</span></h3>
-            </div>
-            <span class="project-badge-status">Production Live</span>
+          <div class="app-icon-wrapper">
+            <img src="assets/apps/haseem.png" alt="Haseem App Icon" class="app-icon-img" loading="lazy">
           </div>
-          <p class="project-desc">
-            Complete SaaS financial invoicing and accounting platform enabling merchants to issue e-invoices, manage business expenses, and archive digital receipts compliant with tax regulations.
+          <h3 class="app-title">Haseem <span class="ar-title">(حسيم)</span></h3>
+          <p class="app-desc">
+            A comprehensive SaaS financial invoicing platform enabling merchants to issue compliant e-invoices, manage expenses, and archive digital receipts...
           </p>
-          <ul class="project-highlights">
-            <li>Custom enterprise PDF document rendering engine for official tax formats.</li>
-            <li>Zero-downtime Shorebird Code Push pipelines for instant over-the-air hotfixes.</li>
-            <li>Secure storage encryption and authenticated business API transactions.</li>
-          </ul>
-          <div class="project-footer">
-            <div class="project-tech-pills">
-              <span>Flutter</span>
-              <span>BLoC</span>
-              <span>Clean Arch</span>
-              <span>Shorebird</span>
-              <span>Secure Storage</span>
-            </div>
-            <div class="project-links">
-              <a href="https://apps.apple.com/eg/app/%D8%AD%D8%B3%D9%8A%D9%85-%D9%85%D8%AD%D8%A7%D8%B3%D8%A8%D8%A9-%D9%88%D9%81%D9%88%D8%AA%D8%B1%D8%A9-%D8%A5%D9%84%D9%83%D8%AA%D8%B1%D9%88%D9%86%D9%8A%D8%A9/id6794842013?l=ar" target="_blank" rel="noopener" class="store-btn" title="View on App Store">
-                🍏 App Store
-              </a>
-              <a href="https://play.google.com/store/apps/details?id=com.haseem.app" target="_blank" rel="noopener" class="store-btn" title="View on Google Play">
-                🤖 Google Play
-              </a>
-            </div>
+          <div class="app-badge-area">
+            <svg class="app-playstore-icon" viewBox="0 0 512 512" width="24" height="24" title="Google Play Store">
+              <path fill="#4285F4" d="M48.7 13.7C37.3 25.8 30.6 44.7 30.6 68.7v374.6c0 24 6.7 42.9 18.1 55l2.8 2.8 214.2-214.2v-5.8L51.5 66.9l-2.8-53.2z"/>
+              <path fill="#FBBC05" d="M337.8 335l-72.1-72.1v-5.8l72.1-72.1 1.7 1 85.3 48.5c24.3 13.8 24.3 36.4 0 50.2l-87 50.3z"/>
+              <path fill="#EA4335" d="M339.5 334L265.7 260 51.5 474.2c8 8.5 21.2 9.5 36.1 1.1l251.9-141.3z"/>
+              <path fill="#34A853" d="M339.5 178L87.6 36.7C72.7 28.3 59.5 29.3 51.5 37.8L265.7 252l73.8-74z"/>
+            </svg>
+            <svg class="app-apple-icon" viewBox="0 0 814 1000" width="24" height="24" title="Apple App Store">
+              <path fill="currentColor" d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 439.8 7.1 340.6 7.1 245.5c0-170.8 111.4-261.1 220.9-261.1 75.9 0 138.9 49.7 186.9 49.7 45.5 0 117.1-52.8 205.8-52.8 33.4 0 121.9 3.2 182.5 88.3zm-162-107.4c-20.1 23.7-53.7 41.2-84.7 41.2-3.8 0-7.7-.5-11.3-1.1-1-4.4-1.5-8.9-1.5-13.6 0-56.7 41.4-107.3 78.3-130.3 19.5-12.4 53.5-22.1 78.3-22.8 1 5.3 1.5 10.6 1.5 16.4 0 55.4-34.1 108.6-60.6 110.2z"/>
+            </svg>
           </div>
+          <button class="btn-view-details" onclick="openProjectModal('haseem')">
+            VIEW DETAILS
+          </button>
         </div>
 
-        <!-- Project 2: Checkpoint -->
+        <!-- App 2: Checkpoint -->
         <div class="project-card reveal">
-          <div class="project-top">
-            <div>
-              <span class="project-category">Enterprise · HR &amp; Attendance</span>
-              <h3 class="project-title">Checkpoint</h3>
-            </div>
-            <span class="project-badge-status">Enterprise Deployed</span>
+          <div class="app-icon-wrapper" style="background: #ffffff;">
+            <img src="assets/apps/checkpoint.png" alt="Checkpoint App Icon" class="app-icon-img" loading="lazy" style="object-fit: contain; padding: 6px;">
           </div>
-          <p class="project-desc">
-            Real-time GPS attendance and employee monitoring system with anti-spoofing verification, dynamic geofencing, and multi-tier organizational dashboards.
+          <h3 class="app-title">Checkpoint</h3>
+          <p class="app-desc">
+            A real-time GPS attendance and employee monitoring system with anti-spoofing verification, dynamic geofencing, and multi-tier organizational dashboards...
           </p>
-          <ul class="project-highlights">
-            <li>Dynamic GPS check-in/check-out with spoofing detection and mock location guards.</li>
-            <li>Role-based access hierarchies (Employee, Supervisor, Executive Admin).</li>
-            <li>Automated leave management and real-time attendance analytics.</li>
-          </ul>
-          <div class="project-footer">
-            <div class="project-tech-pills">
-              <span>Flutter</span>
-              <span>Google Maps API</span>
-              <span>Geofencing</span>
-              <span>Clean Arch</span>
-              <span>Firebase</span>
-            </div>
-            <div class="project-links">
-              <a href="https://systmgulf.com/products.html" target="_blank" rel="noopener" class="store-btn" title="Systm Gulf Product">
-                🏢 Product Info
-              </a>
-            </div>
+          <div class="app-badge-area">
+            <span class="app-type-pill">ENTERPRISE APP</span>
           </div>
+          <button class="btn-view-details" onclick="openProjectModal('checkpoint')">
+            VIEW DETAILS
+          </button>
         </div>
 
-        <!-- Project 3: El-Beda'a -->
+        <!-- App 3: El-Beda'a -->
         <div class="project-card reveal">
-          <div class="project-top">
-            <div>
-              <span class="project-category">B2B / B2C Marketplace · 5K+ DL</span>
-              <h3 class="project-title">El-Beda'a <span class="ar-title">(البضاعة)</span></h3>
-            </div>
-            <span class="project-badge-status">5,000+ Downloads</span>
+          <div class="app-icon-wrapper" style="background: #ffffff;">
+            <img src="assets/apps/elbedaa.png" alt="El-Beda'a App Icon" class="app-icon-img" loading="lazy" style="object-fit: contain;">
           </div>
-          <p class="project-desc">
-            Large-scale marketplace connecting construction materials suppliers and buyers with high-performance multi-level category navigation and optimized product search.
+          <h3 class="app-title">El-Beda'a <span class="ar-title">(البضاعة)</span></h3>
+          <p class="app-desc">
+            A large-scale marketplace connecting construction materials suppliers and buyers with high-performance navigation and optimized search...
           </p>
-          <ul class="project-highlights">
-            <li>Deeply nested category browsing with sub-millisecond cached queries.</li>
-            <li>Optimized multi-parameter filtering and multi-image memory caching.</li>
-            <li>Integrated secure checkout workflows and real-time push updates.</li>
-          </ul>
-          <div class="project-footer">
-            <div class="project-tech-pills">
-              <span>Flutter</span>
-              <span>Cubit</span>
-              <span>REST APIs</span>
-              <span>FCM Push</span>
-              <span>Image Cache</span>
-            </div>
-            <div class="project-links">
-              <a href="https://apps.apple.com/us/app/id6737291419" target="_blank" rel="noopener" class="store-btn">
-                🍏 App Store
-              </a>
-              <a href="https://play.google.com/store/apps/details?id=goods.goods&hl=ar" target="_blank" rel="noopener" class="store-btn">
-                🤖 Google Play
-              </a>
-            </div>
+          <div class="app-badge-area">
+            <svg class="app-playstore-icon" viewBox="0 0 512 512" width="24" height="24" title="Google Play Store">
+              <path fill="#4285F4" d="M48.7 13.7C37.3 25.8 30.6 44.7 30.6 68.7v374.6c0 24 6.7 42.9 18.1 55l2.8 2.8 214.2-214.2v-5.8L51.5 66.9l-2.8-53.2z"/>
+              <path fill="#FBBC05" d="M337.8 335l-72.1-72.1v-5.8l72.1-72.1 1.7 1 85.3 48.5c24.3 13.8 24.3 36.4 0 50.2l-87 50.3z"/>
+              <path fill="#EA4335" d="M339.5 334L265.7 260 51.5 474.2c8 8.5 21.2 9.5 36.1 1.1l251.9-141.3z"/>
+              <path fill="#34A853" d="M339.5 178L87.6 36.7C72.7 28.3 59.5 29.3 51.5 37.8L265.7 252l73.8-74z"/>
+            </svg>
+            <svg class="app-apple-icon" viewBox="0 0 814 1000" width="24" height="24" title="Apple App Store">
+              <path fill="currentColor" d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 439.8 7.1 340.6 7.1 245.5c0-170.8 111.4-261.1 220.9-261.1 75.9 0 138.9 49.7 186.9 49.7 45.5 0 117.1-52.8 205.8-52.8 33.4 0 121.9 3.2 182.5 88.3zm-162-107.4c-20.1 23.7-53.7 41.2-84.7 41.2-3.8 0-7.7-.5-11.3-1.1-1-4.4-1.5-8.9-1.5-13.6 0-56.7 41.4-107.3 78.3-130.3 19.5-12.4 53.5-22.1 78.3-22.8 1 5.3 1.5 10.6 1.5 16.4 0 55.4-34.1 108.6-60.6 110.2z"/>
+            </svg>
           </div>
+          <button class="btn-view-details" onclick="openProjectModal('elbedaa')">
+            VIEW DETAILS
+          </button>
         </div>
 
-        <!-- Project 4: Enjaz -->
+        <!-- App 4: Enjaz -->
         <div class="project-card reveal">
-          <div class="project-top">
-            <div>
-              <span class="project-category">Multi-Vendor E-Commerce</span>
-              <h3 class="project-title">Enjaz <span class="ar-title">(إنجاز)</span></h3>
-            </div>
-            <span class="project-badge-status">Multi-App Suite</span>
+          <div class="app-icon-wrapper" style="background: #ffffff;">
+            <img src="assets/apps/enjaz.png" alt="Enjaz App Icon" class="app-icon-img" loading="lazy" style="object-fit: contain;">
           </div>
-          <p class="project-desc">
-            Complete ecosystem comprising dedicated customer, vendor, and delivery driver applications with real-time route navigation and automated order dispatching.
+          <h3 class="app-title">Enjaz <span class="ar-title">(إنجاز)</span></h3>
+          <p class="app-desc">
+            A complete ecosystem comprising customer, vendor, and delivery driver apps with real-time route navigation and automated order dispatching...
           </p>
-          <ul class="project-highlights">
-            <li>Live driver tracking via WebSockets and Google Maps turn-by-turn logic.</li>
-            <li>Vendor dashboard for inventory management and instant sales analytics.</li>
-            <li>Seamless synchronized order lifecycle across all three apps.</li>
-          </ul>
-          <div class="project-footer">
-            <div class="project-tech-pills">
-              <span>Flutter</span>
-              <span>BLoC</span>
-              <span>WebSockets</span>
-              <span>Google Maps</span>
-              <span>Realtime DB</span>
-            </div>
-            <div class="project-links">
-              <a href="https://apps.apple.com/ph/app/enjaz-eg/id6785322840" target="_blank" rel="noopener" class="store-btn">
-                🍏 App Store
-              </a>
-              <a href="https://play.google.com/store/apps/details?id=com.nexteramea.enjaz" target="_blank" rel="noopener" class="store-btn">
-                🤖 Google Play
-              </a>
-            </div>
+          <div class="app-badge-area">
+            <svg class="app-playstore-icon" viewBox="0 0 512 512" width="24" height="24" title="Google Play Store">
+              <path fill="#4285F4" d="M48.7 13.7C37.3 25.8 30.6 44.7 30.6 68.7v374.6c0 24 6.7 42.9 18.1 55l2.8 2.8 214.2-214.2v-5.8L51.5 66.9l-2.8-53.2z"/>
+              <path fill="#FBBC05" d="M337.8 335l-72.1-72.1v-5.8l72.1-72.1 1.7 1 85.3 48.5c24.3 13.8 24.3 36.4 0 50.2l-87 50.3z"/>
+              <path fill="#EA4335" d="M339.5 334L265.7 260 51.5 474.2c8 8.5 21.2 9.5 36.1 1.1l251.9-141.3z"/>
+              <path fill="#34A853" d="M339.5 178L87.6 36.7C72.7 28.3 59.5 29.3 51.5 37.8L265.7 252l73.8-74z"/>
+            </svg>
+            <svg class="app-apple-icon" viewBox="0 0 814 1000" width="24" height="24" title="Apple App Store">
+              <path fill="currentColor" d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 439.8 7.1 340.6 7.1 245.5c0-170.8 111.4-261.1 220.9-261.1 75.9 0 138.9 49.7 186.9 49.7 45.5 0 117.1-52.8 205.8-52.8 33.4 0 121.9 3.2 182.5 88.3zm-162-107.4c-20.1 23.7-53.7 41.2-84.7 41.2-3.8 0-7.7-.5-11.3-1.1-1-4.4-1.5-8.9-1.5-13.6 0-56.7 41.4-107.3 78.3-130.3 19.5-12.4 53.5-22.1 78.3-22.8 1 5.3 1.5 10.6 1.5 16.4 0 55.4-34.1 108.6-60.6 110.2z"/>
+            </svg>
           </div>
+          <button class="btn-view-details" onclick="openProjectModal('enjaz')">
+            VIEW DETAILS
+          </button>
         </div>
 
-        <!-- Project 5: Altajwid Almuysar -->
+        <!-- App 5: Altajwid Almuysar -->
         <div class="project-card reveal">
-          <div class="project-top">
-            <div>
-              <span class="project-category">Educational Media · 5K+ DL</span>
-              <h3 class="project-title">Altajwid Almuysar <span class="ar-title">(التجويد الميسر)</span></h3>
-            </div>
-            <span class="project-badge-status">5,000+ Downloads</span>
+          <div class="app-icon-wrapper" style="background: #ffffff;">
+            <img src="assets/apps/altajwid.png" alt="Altajwid Almuysar App Icon" class="app-icon-img" loading="lazy" style="object-fit: contain;">
           </div>
-          <p class="project-desc">
-            High-performance educational streaming application featuring multi-threaded offline media caching, background audio players, and asynchronous PDF document rendering.
+          <h3 class="app-title">Altajwid Almuysar <span class="ar-title">(التجويد الميسر)</span></h3>
+          <p class="app-desc">
+            A high-performance educational streaming app featuring multi-threaded offline media caching, background audio players, and asynchronous PDF rendering...
           </p>
-          <ul class="project-highlights">
-            <li>Multi-threaded caching engine for offline high-fidelity audio/video.</li>
-            <li>Asynchronous PDF rendering engine with low memory footprint.</li>
-            <li>Background playback service maintaining audio across device lock states.</li>
-          </ul>
-          <div class="project-footer">
-            <div class="project-tech-pills">
-              <span>Flutter</span>
-              <span>Hive DB</span>
-              <span>Audio Service</span>
-              <span>PDF Engine</span>
-              <span>Offline Cache</span>
-            </div>
-            <div class="project-links">
-              <a href="https://play.google.com/store/apps/details?id=com.eltagweed_elmoyasar&pcampaignid=web_share" target="_blank" rel="noopener" class="store-btn">
-                🤖 Google Play
-              </a>
-            </div>
+          <div class="app-badge-area">
+            <svg class="app-playstore-icon" viewBox="0 0 512 512" width="24" height="24" title="Google Play Store">
+              <path fill="#4285F4" d="M48.7 13.7C37.3 25.8 30.6 44.7 30.6 68.7v374.6c0 24 6.7 42.9 18.1 55l2.8 2.8 214.2-214.2v-5.8L51.5 66.9l-2.8-53.2z"/>
+              <path fill="#FBBC05" d="M337.8 335l-72.1-72.1v-5.8l72.1-72.1 1.7 1 85.3 48.5c24.3 13.8 24.3 36.4 0 50.2l-87 50.3z"/>
+              <path fill="#EA4335" d="M339.5 334L265.7 260 51.5 474.2c8 8.5 21.2 9.5 36.1 1.1l251.9-141.3z"/>
+              <path fill="#34A853" d="M339.5 178L87.6 36.7C72.7 28.3 59.5 29.3 51.5 37.8L265.7 252l73.8-74z"/>
+            </svg>
+            <span class="app-type-pill" style="font-size:0.62rem; padding: 2px 8px;">5K+ DL</span>
           </div>
+          <button class="btn-view-details" onclick="openProjectModal('altajwid')">
+            VIEW DETAILS
+          </button>
         </div>
 
-        <!-- Project 6: Tawreda -->
+        <!-- App 6: Tawreda -->
         <div class="project-card reveal">
-          <div class="project-top">
-            <div>
-              <span class="project-category">E-Commerce &amp; Investment</span>
-              <h3 class="project-title">Tawreda <span class="ar-title">(توريدة)</span></h3>
-            </div>
-            <span class="project-badge-status">Production Live</span>
+          <div class="app-icon-wrapper">
+            <img src="assets/apps/tawreda.png" alt="Tawreda App Icon" class="app-icon-img" loading="lazy" style="object-fit: cover;">
           </div>
-          <p class="project-desc">
-            Full-featured e-commerce platform incorporating an innovative investment and resale module with real-time product price tracking and multi-gateway checkout.
+          <h3 class="app-title">Tawreda <span class="ar-title">(توريدة)</span></h3>
+          <p class="app-desc">
+            A full-featured e-commerce platform incorporating an innovative investment and resale module with real-time product price tracking...
           </p>
-          <ul class="project-highlights">
-            <li>Persistent cart state and synchronized cloud wishlist across sessions.</li>
-            <li>Real-time product price monitoring and automatic resale profit calculations.</li>
-            <li>Built strictly on Clean Architecture with robust BLoC state separation.</li>
-          </ul>
-          <div class="project-footer">
-            <div class="project-tech-pills">
-              <span>Flutter</span>
-              <span>Clean Arch</span>
-              <span>BLoC</span>
-              <span>Payment Gateways</span>
-              <span>REST APIs</span>
-            </div>
-            <div class="project-links">
-              <a href="https://apps.apple.com/pa/app/%D8%AA%D9%88%D8%B1%D9%8A%D8%AF%D9%87/id6466742206?l=en-GB" target="_blank" rel="noopener" class="store-btn">
-                🍏 App Store
-              </a>
-              <a href="https://play.google.com/store/apps/details?id=com.tawreda_mobile&hl=ar" target="_blank" rel="noopener" class="store-btn">
-                🤖 Google Play
-              </a>
-            </div>
+          <div class="app-badge-area">
+            <svg class="app-playstore-icon" viewBox="0 0 512 512" width="24" height="24" title="Google Play Store">
+              <path fill="#4285F4" d="M48.7 13.7C37.3 25.8 30.6 44.7 30.6 68.7v374.6c0 24 6.7 42.9 18.1 55l2.8 2.8 214.2-214.2v-5.8L51.5 66.9l-2.8-53.2z"/>
+              <path fill="#FBBC05" d="M337.8 335l-72.1-72.1v-5.8l72.1-72.1 1.7 1 85.3 48.5c24.3 13.8 24.3 36.4 0 50.2l-87 50.3z"/>
+              <path fill="#EA4335" d="M339.5 334L265.7 260 51.5 474.2c8 8.5 21.2 9.5 36.1 1.1l251.9-141.3z"/>
+              <path fill="#34A853" d="M339.5 178L87.6 36.7C72.7 28.3 59.5 29.3 51.5 37.8L265.7 252l73.8-74z"/>
+            </svg>
+            <svg class="app-apple-icon" viewBox="0 0 814 1000" width="24" height="24" title="Apple App Store">
+              <path fill="currentColor" d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 439.8 7.1 340.6 7.1 245.5c0-170.8 111.4-261.1 220.9-261.1 75.9 0 138.9 49.7 186.9 49.7 45.5 0 117.1-52.8 205.8-52.8 33.4 0 121.9 3.2 182.5 88.3zm-162-107.4c-20.1 23.7-53.7 41.2-84.7 41.2-3.8 0-7.7-.5-11.3-1.1-1-4.4-1.5-8.9-1.5-13.6 0-56.7 41.4-107.3 78.3-130.3 19.5-12.4 53.5-22.1 78.3-22.8 1 5.3 1.5 10.6 1.5 16.4 0 55.4-34.1 108.6-60.6 110.2z"/>
+            </svg>
           </div>
+          <button class="btn-view-details" onclick="openProjectModal('tawreda')">
+            VIEW DETAILS
+          </button>
         </div>
       </div>
     </div>
@@ -3331,6 +3631,53 @@
     </div>
   </div>
 
+  <!-- PROJECT DETAILS MODAL -->
+  <div class="modal-backdrop" id="projectModal" onclick="handleBackdropClick(event)">
+    <div class="modal-content" style="max-width: 740px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div id="modalAppIcon" style="width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 14px rgba(0,0,0,0.3); overflow: hidden;"></div>
+          <div>
+            <h3 id="modalAppTitle" style="font-size: 1.25rem; margin: 0; color: var(--text-primary);">App Title</h3>
+            <span id="modalAppCategory" style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent-cyan); text-transform: uppercase;">Category</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" onclick="closeProjectModal()" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 24px; overflow-y: auto; max-height: calc(85vh - 80px);">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+          <span id="modalAppBadge" class="project-badge-status" style="font-size: 0.72rem;">Production Live</span>
+        </div>
+        <p id="modalAppDesc" style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 22px;"></p>
+        
+        <!-- App Screenshots Gallery -->
+        <div id="modalAppScreenshotsSection" style="margin-bottom: 24px; display: none;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <h4 style="font-size: 0.88rem; font-family: var(--font-mono); color: var(--text-primary); text-transform: uppercase; margin: 0; letter-spacing: 0.05em;" id="modalScreenshotsTitle">App Store Previews &amp; UI</h4>
+            <span style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);" id="modalScreenshotsHint">Scroll or click to preview</span>
+          </div>
+          <div id="modalAppScreenshots" class="modal-screenshots-track"></div>
+        </div>
+
+        <h4 style="font-size: 0.88rem; font-family: var(--font-mono); color: var(--text-primary); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;" id="modalHighlightsTitle">Key Technical Highlights</h4>
+        <ul id="modalAppHighlights" class="project-highlights" style="margin-bottom: 24px;"></ul>
+
+        <h4 style="font-size: 0.88rem; font-family: var(--font-mono); color: var(--text-primary); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;" id="modalTechTitle">Technologies &amp; Architecture</h4>
+        <div id="modalAppTech" class="project-tech-pills" style="margin-bottom: 26px;"></div>
+
+        <div id="modalAppLinks" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding-top: 18px; border-top: 1px solid var(--border-subtle);"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREENSHOT LIGHTBOX MODAL -->
+  <div class="modal-backdrop" id="screenshotLightbox" onclick="closeScreenshotLightbox(event)" style="z-index: 2500; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);">
+    <div style="position: relative; max-width: 90vw; max-height: 90vh; display: flex; align-items: center; justify-content: center;">
+      <button class="modal-close-btn" onclick="document.getElementById('screenshotLightbox').classList.remove('open')" style="position: absolute; top: -38px; right: 0; color: #fff; font-size: 1.8rem; background: transparent; border: none; cursor: pointer;" aria-label="Close preview">✕</button>
+      <img id="lightboxImg" src="" alt="App Preview" style="max-width: 100%; max-height: 82vh; border-radius: 16px; box-shadow: 0 15px 50px rgba(0,0,0,0.9); object-fit: contain; border: 1px solid rgba(255,255,255,0.15);">
+    </div>
+  </div>
+
   <!-- TOAST -->
   <div class="toast" id="toast">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
@@ -3418,6 +3765,7 @@
         secContactDesc: "Whether you are looking to build a high-performance Flutter app, audit an existing codebase for security and memory performance, or hire for a key engineering position — let's connect!",
         copyContactBtn: "Copy Email & Phone to Clipboard",
         toastCopied: "Copied to clipboard! 📋",
+        viewDetailsBtn: "VIEW DETAILS",
         readArticleBtn: "Read Full Article →",
         articles: [
           {
@@ -3493,6 +3841,7 @@
         secContactDesc: "سواء كنت ترغب في بناء تطبيق فلاتر فائق الأداء، أو تدقيق كود حالي من حيث الأمان وسرعة الذاكرة، أو توظيف مهندس للمشاريع الكبرى — دعنا نتواصل!",
         copyContactBtn: "نسخ البريد ورقم الهاتف إلى الحافظة",
         toastCopied: "تم النسخ إلى الحافظة بنجاح! 📋",
+        viewDetailsBtn: "عرض التفاصيل",
         readArticleBtn: "قراءة المقال كاملاً ←",
         articles: [
           {
@@ -3612,6 +3961,15 @@
       if (projEyebrow) projEyebrow.textContent = t.secProjectsEyebrow;
       const projTitle = document.querySelector('#projects .section-title');
       if (projTitle) projTitle.textContent = t.secProjectsTitle;
+
+      const viewDetailsBtns = document.querySelectorAll('.projects-grid .btn-view-details');
+      viewDetailsBtns.forEach(btn => {
+        btn.textContent = t.viewDetailsBtn || (lang === 'ar' ? 'عرض التفاصيل' : 'VIEW DETAILS');
+      });
+      const appTypePills = document.querySelectorAll('.projects-grid .app-type-pill');
+      appTypePills.forEach(pill => {
+        pill.textContent = lang === 'ar' ? 'تطبيق موبايل' : 'MOBILE APP';
+      });
 
       // Update Section 05 Articles
       const artEyebrow = document.querySelector('#articles .badge-eyebrow');
@@ -3890,11 +4248,295 @@
       }
     }
 
+    // --- Projects Data & Modal Logic ---
+    const projectsData = {
+      haseem: {
+        id: "haseem",
+        name: "Haseem (حسيم)",
+        category: "FinTech · Cloud Invoicing",
+        categoryAr: "تكنولوجيا مالية · الفوترة السحابية",
+        badge: "Production Live",
+        badgeAr: "متاح بالإنتاج",
+        image: "assets/apps/haseem.png",
+        descEn: "Complete SaaS financial invoicing and accounting platform enabling merchants to issue e-invoices, manage business expenses, and archive digital receipts compliant with official tax regulations.",
+        descAr: "منصة فوترة ومحاسبة سحابية متكاملة للشركات والتجار تتيح إصدار الفواتير الإلكترونية المعتمدة ضريبياً، إدارة المصروفات، وأرشفة الإيصالات الرقمية وفق أحدث المعايير.",
+        highlightsEn: [
+          "Custom enterprise PDF document rendering engine for official tax formats.",
+          "Zero-downtime Shorebird Code Push pipelines for instant over-the-air hotfixes.",
+          "Secure storage encryption and authenticated business API transactions."
+        ],
+        highlightsAr: [
+          "محرك متقدم لتوليد وتصدير ملفات الـ PDF الضريبية الرسمية بدقة متناهية.",
+          "تكامل Shorebird Code Push لتحديث وتصحيح التطبيق فوراً OTA دون انتظار مراجعة المتاجر.",
+          "تشفير عتادي للبيانات الحساسة ومعاملات API آمنة وموثقة."
+        ],
+        tech: ["Flutter", "BLoC", "Clean Arch", "Shorebird", "Secure Storage", "REST APIs"],
+        screenshots: [
+          "assets/screenshots/haseem/screen_2.jpg",
+          "assets/screenshots/haseem/screen_3.jpg",
+          "assets/screenshots/haseem/screen_4.jpg",
+          "assets/screenshots/haseem/screen_5.jpg",
+          "assets/screenshots/haseem/screen_6.jpg"
+        ],
+        appStore: "https://apps.apple.com/eg/app/%D8%AD%D8%B3%D9%8A%D9%85-%D9%85%D8%AD%D8%A7%D8%B3%D8%A8%D8%A9-%D9%88%D9%81%D9%88%D8%AA%D8%B1%D8%A9-%D8%A5%D9%84%D9%83%D8%AA%D8%B1%D9%88%D9%86%D9%8A%D8%A9/id6794842013?l=ar",
+        googlePlay: "https://play.google.com/store/apps/details?id=com.haseem.app",
+        web: null
+      },
+      checkpoint: {
+        id: "checkpoint",
+        name: "Checkpoint",
+        category: "Enterprise · HR & Attendance",
+        categoryAr: "أنظمة مؤسسية · الحضور الذكي والـ HR",
+        badge: "Enterprise Deployed",
+        badgeAr: "منشور بالمؤسسات",
+        image: "assets/apps/checkpoint.png",
+        descEn: "Real-time GPS attendance and employee monitoring system with anti-spoofing verification, dynamic geofencing, and multi-tier organizational dashboards.",
+        descAr: "نظام ذكي متقدم لتسجيل الحضور والانصراف بالـ GPS ومتابعة الموظفين مع حماية صارمة ضد التزييف (Mock Location)، ونطاقات جغرافية ديناميكية Geofencing.",
+        highlightsEn: [
+          "Dynamic GPS check-in/check-out with spoofing detection and mock location guards.",
+          "Role-based access hierarchies (Employee, Supervisor, Executive Admin).",
+          "Automated leave management and real-time attendance analytics."
+        ],
+        highlightsAr: [
+          "تسجيل حضور وانصراف ذكي بالـ GPS مع كشف البرامج الوهمية وكسر الحماية (Root/Jailbreak).",
+          "صلاحيات متعددة المستويات (موظف، مشرف، مدير تنفيذي).",
+          "إدارة مؤتمتة للإجازات ولوحات تحكم بيانية فورية لأداء الفرق."
+        ],
+        tech: ["Flutter", "Google Maps API", "Geofencing", "Clean Arch", "Firebase", "Biometrics"],
+        appStore: null,
+        googlePlay: null,
+        web: "https://systmgulf.com/products.html"
+      },
+      elbedaa: {
+        id: "elbedaa",
+        name: "El-Beda'a (البضاعة)",
+        category: "B2B / B2C Marketplace · 5K+ DL",
+        categoryAr: "سوق إلكتروني B2B/B2C · +5K تنزيل",
+        badge: "5,000+ Downloads",
+        badgeAr: "+5,000 تنزيل",
+        image: "assets/apps/elbedaa.png",
+        descEn: "Large-scale marketplace connecting construction materials suppliers and buyers with high-performance multi-level category navigation and optimized product search.",
+        descAr: "سوق ومنصة إلكترونية ضخمة لربط موردي وتجار مواد البناء والمستهلكين مع تصفح هرمي متعدد المستويات وبحث فائق السرعة وفلاتر متقدمة.",
+        highlightsEn: [
+          "Deeply nested category browsing with sub-millisecond cached queries.",
+          "Optimized multi-parameter filtering and multi-image memory caching.",
+          "Integrated secure checkout workflows and real-time push updates."
+        ],
+        highlightsAr: [
+          "تصفح تصنيفات عميقة مع تخزين واسترجاع لحظي فائق الاستجابة.",
+          "فلترة دقيقة للمنتجات مع إدارة ذكية للذاكرة وكاش الصور لتفادي استهلاك الرام.",
+          "بوابات دفع آمنة وإشعارات فورية متقدمة عبر FCM."
+        ],
+        tech: ["Flutter", "Cubit", "REST APIs", "FCM Push", "Image Cache", "Clean Arch"],
+        screenshots: [
+          "assets/screenshots/elbedaa/screen_2.jpg",
+          "assets/screenshots/elbedaa/screen_3.jpg",
+          "assets/screenshots/elbedaa/screen_4.jpg",
+          "assets/screenshots/elbedaa/screen_5.jpg",
+          "assets/screenshots/elbedaa/screen_6.jpg"
+        ],
+        appStore: "https://apps.apple.com/us/app/id6737291419",
+        googlePlay: "https://play.google.com/store/apps/details?id=goods.goods&hl=ar",
+        web: null
+      },
+      enjaz: {
+        id: "enjaz",
+        name: "Enjaz (إنجاز)",
+        category: "Multi-Vendor E-Commerce",
+        categoryAr: "منظومة تجارة متعددة التطبيقات",
+        badge: "Multi-App Suite",
+        badgeAr: "مجموعة تطبيقات متكاملة",
+        image: "assets/apps/enjaz.png",
+        descEn: "Complete ecosystem comprising dedicated customer, vendor, and delivery driver applications with real-time route navigation and automated order dispatching.",
+        descAr: "منظومة لوجستية وتجارية متكاملة تشمل تطبيقات منفصلة للعملاء، والتجار، ومندوبي التوصيل مع توجيه لحظي وتتبع مباشر ومزامنة لحظية للطلبات.",
+        highlightsEn: [
+          "Live driver tracking via WebSockets and Google Maps turn-by-turn logic.",
+          "Vendor dashboard for inventory management and instant sales analytics.",
+          "Seamless synchronized order lifecycle across all three apps."
+        ],
+        highlightsAr: [
+          "تتبع لحظي لمندوب التوصيل عبر الـ WebSockets وتوجيه الخرائط التفاعلي.",
+          "لوحة تحكم ذكية للتاجر لإدارة المخزون والمبيعات لحظياً.",
+          "مزامنة دورة حياة الطلب عبر التطبيقات الثلاثة في أجزاء من الثانية."
+        ],
+        tech: ["Flutter", "BLoC", "WebSockets", "Google Maps", "Realtime DB", "State Management"],
+        screenshots: [
+          "assets/screenshots/enjaz/screen_2.jpg",
+          "assets/screenshots/enjaz/screen_3.jpg",
+          "assets/screenshots/enjaz/screen_4.jpg",
+          "assets/screenshots/enjaz/screen_5.jpg",
+          "assets/screenshots/enjaz/screen_6.jpg"
+        ],
+        appStore: "https://apps.apple.com/ph/app/enjaz-eg/id6785322840",
+        googlePlay: "https://play.google.com/store/apps/details?id=com.nexteramea.enjaz",
+        web: null
+      },
+      altajwid: {
+        id: "altajwid",
+        name: "Altajwid Almuysar (التجويد الميسر)",
+        category: "Educational Media · 5K+ DL",
+        categoryAr: "تطبيق تعليمي قرآني · +5K تنزيل",
+        badge: "5,000+ Downloads",
+        badgeAr: "+5,000 تنزيل",
+        image: "assets/apps/altajwid.png",
+        descEn: "High-performance educational streaming application featuring multi-threaded offline media caching, background audio players, and asynchronous PDF document rendering.",
+        descAr: "تطبيق تعليمي قرآني تفاعلي يتميز بمحرك تشغيل صوتيات متقدم في الخلفية، ونظام تخزين أوفلاين متعدد المسارات، ومستعرض PDF خفيف وسريع.",
+        highlightsEn: [
+          "Multi-threaded caching engine for offline high-fidelity audio/video.",
+          "Asynchronous PDF rendering engine with low memory footprint.",
+          "Background playback service maintaining audio across device lock states."
+        ],
+        highlightsAr: [
+          "نظام كاش متطور متعدد المسارات لتحميل وتشغيل الدروس الصوتية أوفلاين.",
+          "معالج غير متزامن لتصفح الكتب والـ PDFs باستهلاك منخفض جداً للذاكرة.",
+          "مشغل صوتيات في الخلفية Background Service يعمل بكفاءة مع قفل الشاشة."
+        ],
+        tech: ["Flutter", "Hive DB", "Audio Service", "PDF Engine", "Offline Cache", "Clean Arch"],
+        screenshots: [
+          "assets/screenshots/altajwid/screen_2.jpg",
+          "assets/screenshots/altajwid/screen_3.jpg",
+          "assets/screenshots/altajwid/screen_4.jpg",
+          "assets/screenshots/altajwid/screen_5.jpg",
+          "assets/screenshots/altajwid/screen_6.jpg"
+        ],
+        appStore: null,
+        googlePlay: "https://play.google.com/store/apps/details?id=com.eltagweed_elmoyasar&pcampaignid=web_share",
+        web: null
+      },
+      tawreda: {
+        id: "tawreda",
+        name: "Tawreda (توريدة)",
+        category: "E-Commerce & Investment",
+        categoryAr: "تجارة واستثمار تجزئة",
+        badge: "Production Live",
+        badgeAr: "متاح بالإنتاج",
+        image: "assets/apps/tawreda.png",
+        descEn: "Full-featured e-commerce platform incorporating an innovative investment and resale module with real-time product price tracking and multi-gateway checkout.",
+        descAr: "منصة تجارة إلكترونية مبتكرة تدمج منظومة لإعادة البيع والاستثمار الذكي في البضائع مع تتبع لحظي لتغيرات الأسعار وبوابات دفع إلكترونية متعددة.",
+        highlightsEn: [
+          "Persistent cart state and synchronized cloud wishlist across sessions.",
+          "Real-time product price monitoring and automatic resale profit calculations.",
+          "Built strictly on Clean Architecture with robust BLoC state separation."
+        ],
+        highlightsAr: [
+          "سلة تسوق وقوائم رغبات سحابية ومزامنة فورية عبر كافة الجلسات.",
+          "متابعة لحظية لأسعار المنتجات وحساب تلقائي لهوامش أرباح إعادة البيع.",
+          "معمارية Clean Architecture صارمة مع فصل كامل للمنطق باستخدام BLoC."
+        ],
+        tech: ["Flutter", "Clean Arch", "BLoC", "Payment Gateways", "REST APIs", "Dio Interceptors"],
+        screenshots: [
+          "assets/screenshots/tawreda/screen_2.jpg",
+          "assets/screenshots/tawreda/screen_3.jpg",
+          "assets/screenshots/tawreda/screen_4.jpg",
+          "assets/screenshots/tawreda/screen_5.jpg",
+          "assets/screenshots/tawreda/screen_6.jpg"
+        ],
+        appStore: "https://apps.apple.com/pa/app/%D8%AA%D9%88%D8%B1%D9%8A%D8%AF%D9%87/id6466742206?l=en-GB",
+        googlePlay: "https://play.google.com/store/apps/details?id=com.tawreda_mobile&hl=ar",
+        web: null
+      }
+    };
+
+    function openProjectModal(projectId) {
+      const project = projectsData[projectId];
+      if (!project) return;
+
+      const isAr = document.documentElement.getAttribute('lang') === 'ar';
+      
+      const iconEl = document.getElementById('modalAppIcon');
+      if (iconEl) {
+        iconEl.style.background = '#ffffff';
+        const iconSrc = project.image.startsWith('http') ? 'assets/apps/haseem.png' : `./${project.image}`;
+        iconEl.innerHTML = `<img src="${iconSrc}" alt="${project.name}" onerror="this.onerror=null; this.src='./assets/apps/haseem.png';" style="width:100%; height:100%; object-fit:contain; border-radius:12px; display:block;">`;
+      }
+
+      const titleEl = document.getElementById('modalAppTitle');
+      if (titleEl) titleEl.textContent = project.name;
+
+      const catEl = document.getElementById('modalAppCategory');
+      if (catEl) catEl.textContent = isAr ? project.categoryAr : project.category;
+
+      const badgeEl = document.getElementById('modalAppBadge');
+      if (badgeEl) badgeEl.textContent = isAr ? project.badgeAr : project.badge;
+
+      const descEl = document.getElementById('modalAppDesc');
+      if (descEl) descEl.textContent = isAr ? project.descAr : project.descEn;
+
+      const hTitle = document.getElementById('modalHighlightsTitle');
+      if (hTitle) hTitle.textContent = isAr ? "أبرز الإنجازات والمعايير الهندسية" : "Key Technical Highlights";
+
+      const highlightsEl = document.getElementById('modalAppHighlights');
+      if (highlightsEl) {
+        const list = isAr ? project.highlightsAr : project.highlightsEn;
+        highlightsEl.innerHTML = list.map(item => `<li>${item}</li>`).join('');
+      }
+
+      const tTitle = document.getElementById('modalTechTitle');
+      if (tTitle) tTitle.textContent = isAr ? "التقنيات والمعمارية المستخدمة" : "Technologies & Architecture";
+
+      const techEl = document.getElementById('modalAppTech');
+      if (techEl) {
+        techEl.innerHTML = project.tech.map(t => `<span>${t}</span>`).join('');
+      }
+
+      const linksEl = document.getElementById('modalAppLinks');
+      if (linksEl) {
+        let linksHtml = '';
+        if (project.appStore) {
+          linksHtml += `<a href="${project.appStore}" target="_blank" rel="noopener" class="store-btn"><svg viewBox="0 0 512 512" width="22" height="22" style="vertical-align:middle;margin-right:6px"><rect width="512" height="512" rx="115" fill="#007AFF"/><path fill="#FFFFFF" d="M285.9 164.7l19.5-33.8c4.4-7.6 14.3-10.2 21.9-5.8 7.6 4.4 10.2 14.3 5.8 21.9l-19.5 33.8-27.7-16.1zm98.1 170.1c-4.4 7.6-14.3 10.2-21.9 5.8l-38.6-22.3 27.7-16.1 27 15.6c7.6 4.4 10.2 14.3 5.8 22zM253.2 221.2l-51.7 89.6c-4.4 7.6-14.3 10.2-21.9 5.8-7.6-4.4-10.2-14.3-5.8-21.9l51.7-89.6 27.7 16.1zm130.1-73.3c7.6 4.4 10.2 14.3 5.8 21.9l-92.8 160.7c-4.4 7.6-14.3 10.2-21.9 5.8-7.6-4.4-10.2-14.3-5.8-21.9l92.8-160.7c4.4-7.6 14.3-10.2 21.9-5.8zM174.5 312.3l-19.5-11.3c-7.6-4.4-10.2-14.3-5.8-21.9 4.4-7.6 14.3-10.2 21.9-5.8l19.5 11.3-16.1 27.7zm94-162.9c7.6 4.4 10.2 14.3 5.8 21.9l-32.5 56.2-27.7-16.1 32.5-56.2c4.4-7.7 14.3-10.3 21.9-5.8zM386.7 373.4H125.3c-8.8 0-16-7.2-16-16s7.2-16 16-16h261.4c8.8 0 16 7.2 16 16s-7.2 16-16 16z"/></svg> App Store</a>`;
+        }
+        if (project.googlePlay) {
+          linksHtml += `<a href="${project.googlePlay}" target="_blank" rel="noopener" class="store-btn"><svg viewBox="0 0 512 512" width="22" height="22" style="vertical-align:middle;margin-right:6px"><path fill="#4285F4" d="M48.7 13.7C37.3 25.8 30.6 44.7 30.6 68.7v374.6c0 24 6.7 42.9 18.1 55l2.8 2.8 214.2-214.2v-5.8L51.5 66.9l-2.8-53.2z"/><path fill="#FBBC05" d="M337.8 335l-72.1-72.1v-5.8l72.1-72.1 1.7 1 85.3 48.5c24.3 13.8 24.3 36.4 0 50.2l-87 50.3z"/><path fill="#EA4335" d="M339.5 334L265.7 260 51.5 474.2c8 8.5 21.2 9.5 36.1 1.1l251.9-141.3z"/><path fill="#34A853" d="M339.5 178L87.6 36.7C72.7 28.3 59.5 29.3 51.5 37.8L265.7 252l73.8-74z"/></svg> Google Play</a>`;
+        }
+        if (project.web) {
+          linksHtml += `<a href="${project.web}" target="_blank" rel="noopener" class="store-btn">🏢 ${isAr ? 'تفاصيل المنتج' : 'Product Info'}</a>`;
+        }
+                linksEl.innerHTML = linksHtml;
+
+        // App Screenshots Gallery
+        const screenshotsSection = document.getElementById('modalAppScreenshotsSection');
+        const screenshotsContainer = document.getElementById('modalAppScreenshots');
+        if (project.screenshots && project.screenshots.length) {
+          screenshotsContainer.innerHTML = project.screenshots.map(src => `
+            <div class="modal-screenshot-item"><img src="${src}" loading="lazy" /></div>
+          `).join('');
+          screenshotsSection.style.display = 'block';
+          // Click to open lightbox
+          screenshotsContainer.querySelectorAll('.modal-screenshot-item').forEach(item => {
+            item.addEventListener('click', () => {
+              const img = item.querySelector('img');
+              const lightboxImg = document.getElementById('lightboxImg');
+              lightboxImg.src = img.src;
+              document.getElementById('screenshotLightbox').classList.add('open');
+            });
+          });
+        } else {
+          screenshotsSection.style.display = 'none';
+        }
+      }
+
+      const modal = document.getElementById('projectModal');
+      if (modal) {
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeProjectModal() {
+      const modal = document.getElementById('projectModal');
+      if (modal) {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    }
+
     function handleBackdropClick(e) {
       if (e.target.id === 'cvModal') {
         closeCvModal();
       } else if (e.target.id === 'articleModal') {
         closeArticleModal();
+      } else if (e.target.id === 'projectModal') {
+        closeProjectModal();
       }
     }
 
@@ -3902,6 +4544,7 @@
       if (e.key === 'Escape') {
         closeCvModal();
         closeArticleModal();
+        closeProjectModal();
       }
     });
 
