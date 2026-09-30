@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://osamamahmouddev.github.io/osama-portfolio/sitemap.xml
