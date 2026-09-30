@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Secret Agent Vault: Hardware-Backed Secure Storage in Flutter | Osama Mahmoud</title>
+  <meta name="description" content="An in-depth mobile security analysis on why OS sandboxes fail under root compromise and how to utilize Apple Secure Enclave and Android StrongBox in Flutter.">
+  <meta name="keywords" content="Flutter Security, Secure Enclave, Android StrongBox, Hardware Keystore, flutter_secure_storage, Mobile Pentesting, Cryptography, Osama Mahmoud">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="The Secret Agent Vault: Hardware-Backed Secure Storage in Flutter (Secure Enclave & StrongBox)">
+  <meta property="og:description" content="Why OS Sandboxes fail under root compromise and how to leverage physical hardware cryptoprocessors with Flutter.">
+  <meta property="og:type" content="article">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-main: #030712;
+      --bg-surface: #08101E;
+      --bg-card: rgba(13, 23, 42, 0.78);
+      --bg-card-hover: rgba(19, 34, 64, 0.94);
+      --border-subtle: rgba(56, 189, 248, 0.14);
+      --border-bright: rgba(0, 245, 212, 0.42);
+      --accent-cyan: #00F5D4;
+      --accent-blue: #38BDF8;
+      --accent-indigo: #818CF8;
+      --accent-amber: #FBBF24;
+      --accent-green: #10B981;
+      --accent-red: #EF4444;
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-muted: #64748B;
+      --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-heading: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --shadow-glow: 0 0 25px rgba(0, 245, 212, 0.15);
+      --shadow-card: 0 10px 30px -10px rgba(2, 8, 23, 0.7);
+      --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [data-theme="light"] {
+      --bg-main: #F4F7FB;
+      --bg-surface: #FFFFFF;
+      --bg-card: rgba(255, 255, 255, 0.92);
+      --bg-card-hover: #FFFFFF;
+      --border-subtle: rgba(15, 23, 42, 0.09);
+      --border-bright: rgba(2, 132, 199, 0.38);
+      --accent-cyan: #0284C7;
+      --accent-blue: #2563EB;
+      --accent-indigo: #4F46E5;
+      --text-primary: #0F172A;
+      --text-secondary: #334155;
+      --text-muted: #64748B;
+      --shadow-glow: 0 0 25px rgba(2, 132, 199, 0.12);
+      --shadow-card: 0 10px 30px -10px rgba(15, 23, 42, 0.08);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      line-height: 1.8;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.4s ease, color 0.4s ease;
+    }
+
+    [dir="rtl"] {
+      font-family: 'Cairo', var(--font-body), sans-serif;
+    }
+    [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4 {
+      font-family: 'Cairo', var(--font-heading), sans-serif;
+      letter-spacing: normal;
+    }
+    [dir="rtl"] p, [dir="rtl"] li {
+      font-family: 'Cairo', sans-serif;
+    }
+    [dir="rtl"] .callout {
+      border-left-width: 1px;
+      border-left-style: solid;
+      border-right-width: 4px;
+      border-right-style: solid;
+      border-right-color: var(--accent-cyan);
+    }
+    [dir="rtl"] .callout.danger {
+      border-right-color: var(--accent-red);
+    }
+    [dir="rtl"] .callout.warning {
+      border-right-color: var(--accent-amber);
+    }
+    [dir="rtl"] .callout.tip {
+      border-right-color: var(--accent-green);
+    }
+    [dir="rtl"] .back-btn svg {
+      transform: rotate(180deg);
+    }
+
+    .lang-toggle-btn {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .lang-toggle-btn:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    .content-lang-section {
+      display: none;
+    }
+    .content-lang-section.active {
+      display: block;
+    }
+
+    header.article-header-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(3, 7, 18, 0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: var(--transition);
+    }
+    [data-theme="light"] header.article-header-nav {
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .nav-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    .back-btn:hover {
+      transform: translateX(-4px);
+    }
+    [dir="rtl"] .back-btn:hover {
+      transform: translateX(4px);
+    }
+
+    .btn-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-icon:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    .article-hero {
+      padding: 70px 0 40px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .article-meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-cyan);
+      background: rgba(0, 245, 212, 0.08);
+      border: 1px solid var(--border-bright);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      margin-bottom: 20px;
+    }
+
+    .article-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+
+    .article-subtitle {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .author-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 18px 0;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .author-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .author-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+      padding: 2px;
+    }
+    .author-avatar img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      background: var(--bg-surface);
+    }
+
+    .author-name {
+      font-weight: 700;
+      font-size: 0.98rem;
+    }
+    .author-role {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .article-details {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .article-content {
+      padding: 50px 0 80px;
+      font-size: 1.08rem;
+    }
+
+    .article-content p {
+      margin-bottom: 24px;
+      color: var(--text-secondary);
+    }
+
+    .article-content strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .article-content h2 {
+      font-family: var(--font-heading);
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 50px 0 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .article-content h3 {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      margin: 36px 0 16px;
+    }
+
+    .callout {
+      background: var(--bg-card);
+      border-left: 4px solid var(--accent-cyan);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin: 30px 0;
+      border: 1px solid var(--border-subtle);
+      border-left-width: 4px;
+      border-left-color: var(--accent-cyan);
+    }
+    .callout.danger {
+      border-left-color: var(--accent-red);
+      background: rgba(239, 68, 68, 0.05);
+    }
+    .callout.warning {
+      border-left-color: var(--accent-amber);
+      background: rgba(251, 191, 36, 0.05);
+    }
+
+    .callout-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .code-block {
+      background: #020617;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      margin: 28px 0;
+      overflow: hidden;
+      direction: ltr;
+      text-align: left;
+    }
+
+    .code-header {
+      background: #0B192C;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-cyan);
+    }
+
+    .code-block pre {
+      padding: 20px;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: #E2E8F0;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 30px 0;
+      font-size: 0.88rem;
+    }
+
+    .comparison-table th, .comparison-table td {
+      border: 1px solid var(--border-subtle);
+      padding: 12px 16px;
+      text-align: inherit;
+    }
+
+    .comparison-table th {
+      background: var(--bg-card);
+      color: var(--accent-cyan);
+      font-weight: 700;
+    }
+
+    .comparison-table tr:hover {
+      background: var(--bg-card);
+    }
+
+    .tag-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .tag-strip span {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      padding: 4px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--accent-blue);
+    }
+
+    .share-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-xl);
+      padding: 36px;
+      margin-top: 50px;
+      text-align: center;
+    }
+
+    .share-btns {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 12px 22px;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 1px solid transparent;
+    }
+    .btn-primary {
+      background: var(--accent-cyan);
+      color: #060D1A;
+    }
+    [data-theme="light"] .btn-primary { color: #FFFFFF; }
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border-color: var(--border-subtle);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-surface);
+      border: 1px solid var(--accent-cyan);
+      color: var(--text-primary);
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+  <header class="article-header-nav">
+    <div class="nav-container">
+      <a href="../index.html#articles" class="back-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        <span id="backText">Back to Portfolio</span>
+      </a>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button class="lang-toggle-btn" id="langBtn" onclick="toggleArticleLanguage()">🌐 عربي</button>
+        <button class="btn-icon" onclick="toggleTheme()" aria-label="Toggle Theme" id="themeBtn">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ENGLISH CONTENT SECTION -->
+  <div id="content-en" class="content-lang-section active">
+    <section class="article-hero">
+      <div class="container">
+        <div class="article-meta-badge">Mobile Security &amp; Cryptography</div>
+        <h1 class="article-title">The Secret Agent Vault: Hardware-Backed Secure Storage in Flutter (Secure Enclave &amp; StrongBox)</h1>
+        <p class="article-subtitle">
+          Why OS Sandboxes fail under root compromise, how physical hardware cryptoprocessors keep cryptographic keys unextractable, and how to configure Flutter in "Fortress Mode".
+        </p>
+
+        <div class="author-strip">
+          <div class="author-info">
+            <div class="author-avatar">
+              <img src="../image.png" alt="Osama Mahmoud">
+            </div>
+            <div>
+              <div class="author-name">Osama Mahmoud Mohamed</div>
+              <div class="author-role">Mid-Senior Flutter Developer &amp; Mobile Architect</div>
+            </div>
+          </div>
+
+          <div class="article-details">
+            <span>📅 Sep 2026</span>
+            <span>•</span>
+            <span>⏱️ 12 min read</span>
+            <span>•</span>
+            <span>🔒 Cryptography &amp; Hardware HSM</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="article-content">
+      <div class="container">
+        <h2>The Secret Agent Analogy: The Fragility of OS Sandboxes</h2>
+        <p>
+          Consider your Flutter mobile application as a <strong>field operative (secret agent)</strong> tasked with carrying a mission-critical payload: a sensitive OAuth Refresh Token, a banking session key, or an asymmetric private signing key.
+        </p>
+        <p>
+          Under standard operating conditions, this payload is stored inside an office desk drawer guarded by a security guard standing at the room's entrance. In mobile architecture, this guard represents the <strong>Operating System Application Sandbox (UID isolation &amp; SELinux policies)</strong>. Other standard apps cannot reach inside.
+        </p>
+
+        <div class="callout danger">
+          <div class="callout-title">🚨 The Root &amp; Memory Dump Threat Model</div>
+          <p style="margin-bottom:0;">
+            If an adversary possesses <strong>Root / Jailbreak privileges</strong>, attaches dynamic instrumentation (Frida/GDB), or conducts a volatile RAM scrape, the security guard is overwhelmed. The sandbox vanishes. The attacker opens the drawer, reads plaintext XML SharedPreferences or NSUserDefaults, and clones the authentication session in milliseconds.
+          </p>
+        </div>
+
+        <h2>The Hardware Solution: Physical Cryptographic Isolation</h2>
+        <p>
+          To defend against full OS-level compromise, enterprise mobile systems do not store master keys inside software-accessible memory. Instead, they offload cryptographic key generation and signing to <strong>physically isolated hardware security modules (HSMs)</strong>:
+        </p>
+
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Security Vector</th>
+              <th>Apple Secure Enclave (iOS)</th>
+              <th>Android StrongBox / TEE (Android)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Hardware Architecture</strong></td>
+              <td>Dedicated Apple Silicon coprocessor with isolated Boot ROM, encrypted memory, and hardware TRNG.</td>
+              <td>Dedicated tamper-resistant Hardware Security Module (e.g. Titan M, Knox Chip) with isolated CPU and secure storage.</td>
+            </tr>
+            <tr>
+              <td><strong>Key Accessibility</strong></td>
+              <td>Private keys <strong>never</strong> leave the Secure Enclave boundary; only signatures/plaintexts pass through.</td>
+              <td>Master keys are non-exportable and bound to hardware Keystore Keymaster.</td>
+            </tr>
+            <tr>
+              <td><strong>Physical Protection</strong></td>
+              <td>Side-channel resistant, hardware memory encryption engines, dedicated power rails.</td>
+              <td>Laser fault injection resistant, side-channel shielded, physical tamper-detection sensors.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>How the Vault Works: Signing Without Exposing</h2>
+        <p>
+          When your application needs to authenticate a financial transaction or sign an API request:
+        </p>
+        <ol>
+          <li>The Flutter app constructs the transaction payload in memory.</li>
+          <li>The app dispatches the payload across the platform bridge into the isolated hardware cryptoprocessor.</li>
+          <li>The <strong>Secure Enclave / StrongBox</strong> internally signs the payload using the hardware-bound private key without ever exposing the raw key bytes to Android/iOS memory or the Flutter Dart runtime.</li>
+          <li>The hardware module returns only the cryptographic signature.</li>
+        </ol>
+        <p>
+          <strong>Even if the entire operating system kernel is completely compromised, the master private key cannot be extracted.</strong>
+        </p>
+
+        <h2>Translating to Flutter: Hardened "Fortress Mode" Implementation</h2>
+        <p>
+          In Flutter, the standard package is <a href="https://pub.dev/packages/flutter_secure_storage" target="_blank" rel="noopener" style="color:var(--accent-cyan); text-decoration:underline;"><code>flutter_secure_storage</code></a>. However, default out-of-the-box configurations often default to software-level compatibility modes.
+        </p>
+        <p>
+          Below is our production-tested, hardened implementation that enforces strict hardware encryption on both Android and iOS:
+        </p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>lib/core/security/secure_vault_service.dart</span>
+            <span>Dart</span>
+          </div>
+          <pre><code>import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+class SecureVaultService {
+  SecureVaultService._();
+
+  static const FlutterSecureStorage _vault = FlutterSecureStorage(
+    aOptions: AndroidOptions(
+      // 1. Asymmetric master key protection in Android Keystore / StrongBox
+      keyCipherAlgorithm: KeyCipherAlgorithm.RSA_ECB_OAEPwithSHA_256andMGF1Padding,
+      // 2. Authenticated 256-bit AES-GCM encryption for stored values
+      storageCipherAlgorithm: StorageCipherAlgorithm.AES_GCM_NoPadding,
+      // 3. Store in EncryptedSharedPreferences backed by hardware Keystore
+      encryptedSharedPreferences: true,
+      // 4. Reset on corrupted keystore detection
+      resetOnError: true,
+    ),
+    iOptions: IOSOptions(
+      // 5. Hardware-bound to Secure Enclave, accessible only when device is unlocked
+      accessibility: KeychainAccessibility.unlocked_this_device,
+      // 6. Explicitly disable iCloud Keychain backup synchronization
+      synchronizable: false,
+    ),
+  );
+
+  static Future&lt;void&gt; writeSecret(String key, String value) async {
+    await _vault.write(key: key, value: value);
+  }
+
+  static Future&lt;String?&gt; readSecret(String key) async {
+    return await _vault.read(key: key);
+  }
+
+  static Future&lt;void&gt; deleteSecret(String key) async {
+    await _vault.delete(key: key);
+  }
+
+  static Future&lt;void&gt; wipeVault() async {
+    await _vault.deleteAll();
+  }
+}</code></pre>
+        </div>
+
+        <h2>Cryptographic Parameters Demystified</h2>
+
+        <h3>1. Android: `RSA_ECB_OAEPwithSHA_256andMGF1Padding`</h3>
+        <p>
+          In the Android KeyStore, the Master Key is generated as an asymmetric RSA-2048/4096 keypair inside the TEE/StrongBox. By specifying <strong>OAEP (Optimal Asymmetric Encryption Padding)</strong> with SHA-256 and Mask Generation Function 1 (MGF1):
+        </p>
+        <ul>
+          <li>We mathematically eliminate padding oracle exploits (e.g., Bleichenbacher attacks).</li>
+          <li>Every encryption operation utilizes distinct cryptographic salt, ensuring identical plaintexts generate completely randomized ciphertexts.</li>
+          <li>The storage cipher uses <strong>AES-GCM (Galois/Counter Mode)</strong>, providing authenticated encryption that detects any unauthorized bit-flipping or database tampering.</li>
+        </ul>
+
+        <h3>2. iOS: `KeychainAccessibility.unlocked_this_device` &amp; Anti-Cloning</h3>
+        <p>
+          The iOS Keychain configuration enforces two vital security boundaries:
+        </p>
+        <ul>
+          <li><strong>Zero Exposure During Device Lock:</strong> The encryption keys are derived using the device's hardware UID combined with user passcode entropy. When the device screen is locked, the Secure Enclave drops key access, preventing background data extraction.</li>
+          <li><strong>Preventing iCloud Backup &amp; Device Cloning Attacks:</strong> The <code>this_device</code> flag binds the keychain entry to the physical hardware processor. If an attacker creates an iCloud or iTunes backup and restores it onto another iPhone or emulator, <strong>the key cannot be decrypted</strong>, completely mitigating physical device cloning attacks.</li>
+        </ul>
+
+        <div class="callout warning">
+          <div class="callout-title">⚠️ Handling Keystore Invalidation &amp; Key Rotation</div>
+          <p style="margin-bottom:0;">
+            On Android, if a user changes their device lock screen PIN or registers new biometric fingerprints, the hardware Keystore may permanently invalidate existing encryption keys. Our <code>resetOnError: true</code> policy catches native cryptographic exceptions gracefully and prompts the user for a clean re-authentication flow rather than hard-crashing the Flutter application.
+          </p>
+        </div>
+
+        <div class="tag-strip">
+          <span>#FlutterSecurity</span>
+          <span>#SecureEnclave</span>
+          <span>#AndroidStrongBox</span>
+          <span>#OWASP_MSTG</span>
+          <span>#HardwareKeystore</span>
+          <span>#MobilePentesting</span>
+        </div>
+
+        <div class="share-section">
+          <h3>Securing sensitive FinTech, Health, or Enterprise Flutter apps?</h3>
+          <p style="color:var(--text-secondary); margin-bottom:20px;">
+            Feel free to connect on LinkedIn or reach out to discuss mobile security architecture, threat modeling, and cryptographic hardening.
+          </p>
+          <div class="share-btns">
+            <a href="https://www.linkedin.com/in/osama-mahmoud-601669277/" target="_blank" rel="noopener" class="btn btn-primary">
+              Connect on LinkedIn
+            </a>
+            <button class="btn btn-secondary" onclick="copyLink()">
+              📋 Copy Article Link
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ARABIC CONTENT SECTION -->
+  <div id="content-ar" class="content-lang-section">
+    <section class="article-hero">
+      <div class="container">
+        <div class="article-meta-badge">أمن الموبايل والتشفير الفيزيائي</div>
+        <h1 class="article-title">خزنة العميل السري: التشفير الفيزيائي والعتادي في فلاتر (Secure Enclave &amp; StrongBox)</h1>
+        <p class="article-subtitle">
+          لماذا تنهار حماية الـ OS Sandboxes عند كسر الحماية (Root/Jailbreak)؟ وكيف تحمي معالجات التشفير الفيزيائية مفاتيحك السرية، وكيف تفعّل وضع الحصن القاسي في فلاتر.
+        </p>
+
+        <div class="author-strip">
+          <div class="author-info">
+            <div class="author-avatar">
+              <img src="../image.png" alt="أسامة محمود">
+            </div>
+            <div>
+              <div class="author-name">أسامة محمود محمد</div>
+              <div class="author-role">مطور فلاتر أول ومهندس معمارية تطبيقات الهاتف</div>
+            </div>
+          </div>
+
+          <div class="article-details">
+            <span>📅 سبتمبر 2026</span>
+            <span>•</span>
+            <span>⏱️ قراءة 12 دقيقة</span>
+            <span>•</span>
+            <span>🔒 التشفير الفيزيائي العتادي HSM</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="article-content">
+      <div class="container">
+        <h2>قصة العميل السري: هشاشة حماية الـ OS Sandbox</h2>
+        <p>
+          تخيل أن تطبيقك عبارة عن <strong>"عميل سري"</strong> يحمل مستنداً خطيراً جداً (مثل الـ Access Token، أو مفتاح الجلسة البنكية، أو المفتاح الخاص للتوقيع الرقمي).
+        </p>
+        <p>
+          النظام العادي في نظام تشغيل الموبايل عبارة عن مكتب حراسة <strong>(OS Sandbox)</strong>، المستند محطوط في درج المكتب، وحارس الأمن يقف على الباب لمنع التطبيقات العادية الأخرى من الدخول.
+        </p>
+
+        <div class="callout danger">
+          <div class="callout-title">🚨 سيناريو هجوم الهاكر مع صلاحيات الـ Root والـ RAM Dump</div>
+          <p style="margin-bottom:0;">
+            لكن ماذا لو هاجمت عصابة محترفة (الهاكر يمتلك صلاحيات <strong>Root / Jailbreak</strong>، أو يستخدم أدوات التفتيش الديناميكي مثل Frida)؟
+            العصابة ستقوم بتقييد الحارس وكسر درج المكتب وسرقة المستند في ثوانٍ! هذا بالضبط ما يحدث عند عمل Dump للذاكرة RAM أو قراءة ملفات الـ XML والـ SharedPreferences غير المشفرة على أجهزة مكسورة الحماية.
+          </p>
+        </div>
+
+        <h2>الحل الجذري: غُرفة التشفير الفيزيائية المحصنة</h2>
+        <p>
+          المطور الذكي والمؤسسات المالية لا تترك المستند في درج الحارس في ذاكرة المعالج الرئيسي. بل تطلب من الهاتف استخدام <strong>"خزنة حديدية فيزيائية منفصلة في قبو المبنى"</strong>:
+        </p>
+
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>معيار الأمان</th>
+              <th>Apple Secure Enclave (iOS)</th>
+              <th>Android StrongBox / TEE (Android)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>المعمارية العتادية</strong></td>
+              <td>معالج مساعد منفصل داخل Apple Silicon يحتوي على Boot ROM خاص، وذاكرة مشفرة، ومولد أرقام عشوائية عتادي.</td>
+              <td>وحدة أمان فيزيائية مقاومة للعبث (مثل Titan M في هواتف Pixel أو Knox Vault في سامسونج) بمعالج وذاكرة مستقلين تماماً.</td>
+            </tr>
+            <tr>
+              <td><strong>إمكانية استخراج المفاتيح</strong></td>
+              <td>المفاتيح الخاصة <strong>لا تغادر إطلاقاً</strong> حدود الـ Secure Enclave؛ يخرج فقط التوقيع المشفر.</td>
+              <td>المفاتيح غير قابلة للتصدير ومربوطة بـ Android Keymaster العتادي.</td>
+            </tr>
+            <tr>
+              <td><strong>الحماية الفيزيائية</strong></td>
+              <td>مقاومة لهجمات القنوات الجانبية (Side-channel) ومسارات طاقة معزولة.</td>
+              <td>مقاومة لهجمات حقن أخطاء الليزر والحرارة وحساسات استشعار محاولات العبث والفتح الفيزيائي.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>كيف تعمل الخزنة؟ التوقيع دون كشف المفتاح السري</h2>
+        <p>
+          عندما يحتاج التطبيق إلى إتمام عملية مالية أو توقيع طلب مشفر:
+        </p>
+        <ol>
+          <li>تطبيق فلاتر يجهز بيانات العملية المالية في الذاكرة.</li>
+          <li>التطبيق يرسل البيانات عبر الجسر إلى معالج التشفير المنفصل في القبو.</li>
+          <li>يقوم المعالج الفيزيائي داخل الخزنة <strong>(Secure Enclave / StrongBox)</strong> بتوقيع البيانات بالمفتاح السري المحفوظ داخله، دون أن يرى تطبيق فلاتر أو حتى نظام التشغيل (iOS/Android) المفتاح السري أبداً!</li>
+          <li>تخرج الخزنة التوقيع الرقمي النهائي فقط للتطبيق.</li>
+        </ol>
+        <p>
+          <strong>حتى لو تم اختراق نظام التشغيل بالكامل وسحب صلاحيات الـ Root، يستحيل على الهاكر استخراج المفتاح السري من داخل هذه الخزنة الفيزيائية.</strong>
+        </p>
+
+        <h2>كيف نترجم ذلك إلى كود فلاتر: وضع الحصن القاسي</h2>
+        <p>
+          في فلاتر نستخدم حزمة <a href="https://pub.dev/packages/flutter_secure_storage" target="_blank" rel="noopener" style="color:var(--accent-cyan); text-decoration:underline;"><code>flutter_secure_storage</code></a>، ولكن بالإعدادات المتقدمة المحصنة عتادياً:
+        </p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>lib/core/security/secure_vault_service.dart</span>
+            <span>Dart</span>
+          </div>
+          <pre><code>import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+class SecureVaultService {
+  SecureVaultService._();
+
+  static const FlutterSecureStorage _vault = FlutterSecureStorage(
+    aOptions: AndroidOptions(
+      // 1. حماية المفتاح الرئيسي بتشفير RSA غير متماثل قوي عبر StrongBox / TEE
+      keyCipherAlgorithm: KeyCipherAlgorithm.RSA_ECB_OAEPwithSHA_256andMGF1Padding,
+      // 2. تشفير البيانات المحفوظة بـ AES-GCM 256-bit الموثوق
+      storageCipherAlgorithm: StorageCipherAlgorithm.AES_GCM_NoPadding,
+      // 3. التخزين عبر EncryptedSharedPreferences المدعومة بالـ Keystore العتادي
+      encryptedSharedPreferences: true,
+      // 4. إعادة التهيئة بأمان عند تلف المفاتيح بدلاً من انهيار التطبيق
+      resetOnError: true,
+    ),
+    iOptions: IOSOptions(
+      // 5. ربط المفتاح بالـ Secure Enclave وجعله متاحاً فقط والجهاز مفتوح القفل
+      accessibility: KeychainAccessibility.unlocked_this_device,
+      // 6. منع مزامنة وسرقة المفتاح عبر نسخ الـ iCloud الاحتياطية
+      synchronizable: false,
+    ),
+  );
+
+  static Future&lt;void&gt; writeSecret(String key, String value) async {
+    await _vault.write(key: key, value: value);
+  }
+
+  static Future&lt;String?&gt; readSecret(String key) async {
+    return await _vault.read(key: key);
+  }
+
+  static Future&lt;void&gt; deleteSecret(String key) async {
+    await _vault.delete(key: key);
+  }
+
+  static Future&lt;void&gt; wipeVault() async {
+    await _vault.deleteAll();
+  }
+}</code></pre>
+        </div>
+
+        <h2>شرح الخوارزميات والتكوين الأمني ببساطة وعمق</h2>
+
+        <h3>1. في نظام أندرويد: `RSA_ECB_OAEPwithSHA_256andMGF1Padding`</h3>
+        <p>
+          المفتاح الرئيسي (Master Key) المسؤول عن تشفير أسرارك سيتم حمايته بتشفير غير متماثل قوي جداً وهو RSA داخل معالج الأمان المستقل، مع استخدام حشوة <strong>OAEP</strong> المدعومة بـ <strong>SHA-256</strong>:
+        </p>
+        <ul>
+          <li>هذه الحشوة تمنع هجمات التخمين والتحليل الرياضي للتشفير (Padding Oracle Attacks).</li>
+          <li>تضمن أن تشفير نفس النص مرتين سينتج نصين مشفرين مختلفين تماماً بفضل الـ Random Salt العشوائي.</li>
+          <li>تشفير البيانات يستخدم <strong>AES-GCM</strong>، وهو تشفير موثق يكشف فوراً أي محاولة تعديل أو تلاعب في قاعدة البيانات.</li>
+        </ul>
+
+        <h3>2. في نظام iOS: `KeychainAccessibility.unlocked_this_device` ومنع الاستنساخ</h3>
+        <p>
+          بالنسبة لنظام iOS، حددنا كيفية وصلاحية الوصول للمفتاح عبر الـ Keychain المحمية بالـ Secure Enclave:
+        </p>
+        <ul>
+          <li><strong>unlocked:</strong> البيانات يستحيل قراءتها أو الوصول إليها نهائياً والجهاز مغلق الشاشة (Locked). يجب أن يكون المستخدم قد فتح قفل الشاشة لتستطيع شريحة الـ Secure Enclave فك التشفير.</li>
+          <li><strong>this_device:</strong> المفتاح يتم تشفيره بمفتاح فيزيائي خاص بهذا الجهاز المعين فقط. لو قام المستخدم أو المهاجم بعمل نسخة احتياطية (iCloud / iTunes Backup) ونقلها لجهاز آيفون آخر أو محاكي، <strong>لن يتمكن من فك تشفير المفتاح</strong>، مما يمنع تماماً هجمات استنساخ الأجهزة (Device Cloning).</li>
+        </ul>
+
+        <div class="callout warning">
+          <div class="callout-title">⚠️ التعامل مع تغيير رمز قفل الشاشة والبصمات</div>
+          <p style="margin-bottom:0;">
+            في أندرويد، عندما يقوم المستخدم بتغيير الـ PIN أو حذف/إضافة بصمة جديدة، يقوم الـ Keystore أحياناً بإلغاء صلاحية المفاتيح القديمة لأسباب أمنية. خيار <code>resetOnError: true</code> يمنع انهيار (Crash) التطبيق، ويلتقط الخطأ بسلاسة ليطلب من المستخدم تسجيل الدخول مجدداً بأمان.
+          </p>
+        </div>
+
+        <div class="tag-strip">
+          <span>#أمن_فلاتر</span>
+          <span>#SecureEnclave</span>
+          <span>#AndroidStrongBox</span>
+          <span>#التشفير_الفيزيائي</span>
+          <span>#الأمن_السيبراني</span>
+          <span>#تطبيقات_البنوك</span>
+        </div>
+
+        <div class="share-section">
+          <h3>هل تبني تطبيقات مالية أو طبية تتطلب أعلى معايير الأمان؟</h3>
+          <p style="color:var(--text-secondary); margin-bottom:20px;">
+            تواصل معي عبر LinkedIn لمناقشة المعمارية الأمنية للهواتف الذكية واختبار الاختراق وتشفير البيانات الحساسة.
+          </p>
+          <div class="share-btns">
+            <a href="https://www.linkedin.com/in/osama-mahmoud-601669277/" target="_blank" rel="noopener" class="btn btn-primary">
+              تواصل عبر LinkedIn
+            </a>
+            <button class="btn btn-secondary" onclick="copyLink()">
+              📋 نسخ رابط المقال
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast">Link copied to clipboard!</div>
+
+  <script>
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      const themeBtn = document.getElementById('themeBtn');
+      if (themeBtn) themeBtn.textContent = theme === 'light' ? '🌙' : '☀️';
+    }
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    }
+    (function initTheme() {
+      const saved = localStorage.getItem('theme') || 'light';
+      applyTheme(saved);
+    })();
+
+    function applyArticleLanguage(lang) {
+      document.documentElement.setAttribute('lang', lang);
+      document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+      localStorage.setItem('article_lang', lang);
+
+      const enSection = document.getElementById('content-en');
+      const arSection = document.getElementById('content-ar');
+      const langBtn = document.getElementById('langBtn');
+      const backText = document.getElementById('backText');
+
+      if (lang === 'ar') {
+        if (enSection) enSection.classList.remove('active');
+        if (arSection) arSection.classList.add('active');
+        if (langBtn) langBtn.textContent = '🌐 English';
+        if (backText) backText.textContent = 'العودة للبورتفوليو';
+      } else {
+        if (arSection) arSection.classList.remove('active');
+        if (enSection) enSection.classList.add('active');
+        if (langBtn) langBtn.textContent = '🌐 عربي';
+        if (backText) backText.textContent = 'Back to Portfolio';
+      }
+    }
+
+    function toggleArticleLanguage() {
+      const currentLang = document.documentElement.getAttribute('lang') || 'en';
+      const newLang = currentLang === 'en' ? 'ar' : 'en';
+      applyArticleLanguage(newLang);
+    }
+
+    (function initArticleLanguage() {
+      const saved = localStorage.getItem('article_lang') || localStorage.getItem('lang') || 'en';
+      applyArticleLanguage(saved);
+    })();
+
+    function copyLink() {
+      navigator.clipboard.writeText(window.location.href);
+      const isAr = document.documentElement.getAttribute('lang') === 'ar';
+      const toast = document.getElementById('toast');
+      toast.textContent = isAr ? 'تم نسخ الرابط إلى الحافظة! 📋' : 'Link copied to clipboard! 📋';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+  </script>
+</body>
+</html>

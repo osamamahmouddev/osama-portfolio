@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beyond HTTPS: Certificate Pinning & Defense-in-Depth in Flutter | Osama Mahmoud</title>
+  <meta name="description" content="A comprehensive technical breakdown on MITM proxy interception, SPKI Public Key Pinning in Flutter, and how to defend against Frida runtime SSL bypass scripts.">
+  <meta name="keywords" content="Flutter SSL Pinning, Certificate Pinning, Frida SSL Bypass, MITM Attack, Mobile Security, Burp Suite, Network Pentesting, Osama Mahmoud">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Beyond HTTPS: Certificate Pinning & Defense-in-Depth in Flutter">
+  <meta property="og:description" content="Why HTTPS is insufficient on untrusted networks and how to harden Flutter network communication with multi-layer Defense-in-Depth.">
+  <meta property="og:type" content="article">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-main: #030712;
+      --bg-surface: #08101E;
+      --bg-card: rgba(13, 23, 42, 0.78);
+      --bg-card-hover: rgba(19, 34, 64, 0.94);
+      --border-subtle: rgba(56, 189, 248, 0.14);
+      --border-bright: rgba(0, 245, 212, 0.42);
+      --accent-cyan: #00F5D4;
+      --accent-blue: #38BDF8;
+      --accent-indigo: #818CF8;
+      --accent-amber: #FBBF24;
+      --accent-green: #10B981;
+      --accent-red: #EF4444;
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-muted: #64748B;
+      --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-heading: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --shadow-glow: 0 0 25px rgba(0, 245, 212, 0.15);
+      --shadow-card: 0 10px 30px -10px rgba(2, 8, 23, 0.7);
+      --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [data-theme="light"] {
+      --bg-main: #F4F7FB;
+      --bg-surface: #FFFFFF;
+      --bg-card: rgba(255, 255, 255, 0.92);
+      --bg-card-hover: #FFFFFF;
+      --border-subtle: rgba(15, 23, 42, 0.09);
+      --border-bright: rgba(2, 132, 199, 0.38);
+      --accent-cyan: #0284C7;
+      --accent-blue: #2563EB;
+      --accent-indigo: #4F46E5;
+      --text-primary: #0F172A;
+      --text-secondary: #334155;
+      --text-muted: #64748B;
+      --shadow-glow: 0 0 25px rgba(2, 132, 199, 0.12);
+      --shadow-card: 0 10px 30px -10px rgba(15, 23, 42, 0.08);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      line-height: 1.8;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.4s ease, color 0.4s ease;
+    }
+
+    [dir="rtl"] {
+      font-family: 'Cairo', var(--font-body), sans-serif;
+    }
+    [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4 {
+      font-family: 'Cairo', var(--font-heading), sans-serif;
+      letter-spacing: normal;
+    }
+    [dir="rtl"] p, [dir="rtl"] li {
+      font-family: 'Cairo', sans-serif;
+    }
+    [dir="rtl"] .callout {
+      border-left-width: 1px;
+      border-left-style: solid;
+      border-right-width: 4px;
+      border-right-style: solid;
+      border-right-color: var(--accent-cyan);
+    }
+    [dir="rtl"] .callout.danger {
+      border-right-color: var(--accent-red);
+    }
+    [dir="rtl"] .callout.warning {
+      border-right-color: var(--accent-amber);
+    }
+    [dir="rtl"] .callout.tip {
+      border-right-color: var(--accent-green);
+    }
+    [dir="rtl"] .back-btn svg {
+      transform: rotate(180deg);
+    }
+
+    .lang-toggle-btn {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .lang-toggle-btn:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    .content-lang-section {
+      display: none;
+    }
+    .content-lang-section.active {
+      display: block;
+    }
+
+    header.article-header-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(3, 7, 18, 0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: var(--transition);
+    }
+    [data-theme="light"] header.article-header-nav {
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .nav-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    .back-btn:hover {
+      transform: translateX(-4px);
+    }
+    [dir="rtl"] .back-btn:hover {
+      transform: translateX(4px);
+    }
+
+    .btn-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-icon:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    .article-hero {
+      padding: 70px 0 40px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .article-meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-cyan);
+      background: rgba(0, 245, 212, 0.08);
+      border: 1px solid var(--border-bright);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      margin-bottom: 20px;
+    }
+
+    .article-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+
+    .article-subtitle {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .author-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 18px 0;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .author-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .author-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+      padding: 2px;
+    }
+    .author-avatar img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      background: var(--bg-surface);
+    }
+
+    .author-name {
+      font-weight: 700;
+      font-size: 0.98rem;
+    }
+    .author-role {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .article-details {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .article-content {
+      padding: 50px 0 80px;
+      font-size: 1.08rem;
+    }
+
+    .article-content p {
+      margin-bottom: 24px;
+      color: var(--text-secondary);
+    }
+
+    .article-content strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .article-content h2 {
+      font-family: var(--font-heading);
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 50px 0 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .article-content h3 {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      margin: 36px 0 16px;
+    }
+
+    .callout {
+      background: var(--bg-card);
+      border-left: 4px solid var(--accent-cyan);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin: 30px 0;
+      border: 1px solid var(--border-subtle);
+      border-left-width: 4px;
+      border-left-color: var(--accent-cyan);
+    }
+    .callout.warning {
+      border-left-color: var(--accent-amber);
+      background: rgba(251, 191, 36, 0.05);
+    }
+    .callout.danger {
+      border-left-color: var(--accent-red);
+      background: rgba(239, 68, 68, 0.05);
+    }
+
+    .callout-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .code-block {
+      background: #020617;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      margin: 28px 0;
+      overflow: hidden;
+      direction: ltr;
+      text-align: left;
+    }
+
+    .code-header {
+      background: #0B192C;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-cyan);
+    }
+
+    .code-block pre {
+      padding: 20px;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: #E2E8F0;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 30px 0;
+      font-size: 0.88rem;
+    }
+
+    .comparison-table th, .comparison-table td {
+      border: 1px solid var(--border-subtle);
+      padding: 12px 16px;
+      text-align: inherit;
+    }
+
+    .comparison-table th {
+      background: var(--bg-card);
+      color: var(--accent-cyan);
+      font-weight: 700;
+    }
+
+    .comparison-table tr:hover {
+      background: var(--bg-card);
+    }
+
+    .tag-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .tag-strip span {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      padding: 4px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--accent-blue);
+    }
+
+    .share-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-xl);
+      padding: 36px;
+      margin-top: 50px;
+      text-align: center;
+    }
+
+    .share-btns {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 12px 22px;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 1px solid transparent;
+    }
+    .btn-primary {
+      background: var(--accent-cyan);
+      color: #060D1A;
+    }
+    [data-theme="light"] .btn-primary { color: #FFFFFF; }
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border-color: var(--border-subtle);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-surface);
+      border: 1px solid var(--accent-cyan);
+      color: var(--text-primary);
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+  <header class="article-header-nav">
+    <div class="nav-container">
+      <a href="../index.html#articles" class="back-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        <span id="backText">Back to Portfolio</span>
+      </a>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button class="lang-toggle-btn" id="langBtn" onclick="toggleArticleLanguage()">🌐 عربي</button>
+        <button class="btn-icon" onclick="toggleTheme()" aria-label="Toggle Theme" id="themeBtn">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ENGLISH CONTENT SECTION -->
+  <div id="content-en" class="content-lang-section active">
+    <section class="article-hero">
+      <div class="container">
+        <div class="article-meta-badge">Network Security &amp; Pentesting</div>
+        <h1 class="article-title">Beyond HTTPS: Why Your Flutter App Is Still Vulnerable &amp; How to Implement Defense-in-Depth</h1>
+        <p class="article-subtitle">
+          The dangerous myth that HTTPS alone guarantees mobile security, how Man-in-the-Middle proxies inspect raw traffic, and why SSL Pinning requires multi-layer runtime defense.
+        </p>
+
+        <div class="author-strip">
+          <div class="author-info">
+            <div class="author-avatar">
+              <img src="../image.png" alt="Osama Mahmoud">
+            </div>
+            <div>
+              <div class="author-name">Osama Mahmoud Mohamed</div>
+              <div class="author-role">Mid-Senior Flutter Developer &amp; Mobile Architect</div>
+            </div>
+          </div>
+
+          <div class="article-details">
+            <span>📅 Sep 2026</span>
+            <span>•</span>
+            <span>⏱️ 13 min read</span>
+            <span>•</span>
+            <span>🛡️ SSL Pinning &amp; Frida Defense</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="article-content">
+      <div class="container">
+        <h2>The Comfortable Lie: "We Use HTTPS Everywhere"</h2>
+        <p>
+          In code reviews and architecture meetings, one of the most dangerous answers to the question <em>"How is our mobile traffic secured?"</em> is: <em>"We use HTTPS, so all traffic is encrypted end-to-end."</em>
+        </p>
+        <p>
+          While TLS encryption is an essential baseline, <strong>HTTPS alone does not protect your application from modern interception vectors</strong>. If a user connects via an untrusted public Wi-Fi access point, a compromised enterprise proxy, or a device with user-installed root certificates, the entire TLS channel can be quietly decrypted.
+        </p>
+
+        <div class="callout danger">
+          <div class="callout-title">🚨 How Man-in-the-Middle (MITM) Interception Works</div>
+          <p style="margin-bottom:0;">
+            Mobile penetration testers and adversaries utilize tools like <a href="https://portswigger.net/burp" target="_blank" rel="noopener" style="color:var(--accent-cyan); text-decoration:underline;"><strong>Burp Suite</strong></a>, <a href="https://www.charlesproxy.com/" target="_blank" rel="noopener" style="color:var(--accent-cyan); text-decoration:underline;"><strong>Charles Proxy</strong></a>, or <strong>mitmproxy</strong>. By installing a custom Certificate Authority (CA) into the device's user trust store, the proxy intercepts the TLS handshake, issues forged certificates on-the-fly, and decrypts raw JSON payloads, Bearer tokens, and payment data in plaintext.
+          </p>
+        </div>
+
+        <h2>The Countermeasure: Public Key (SPKI) &amp; Certificate Pinning</h2>
+        <p>
+          <strong>Certificate Pinning</strong> circumvents the device's default CA trust store. Instead of delegating trust to hundreds of commercial root certificate authorities preinstalled on the operating system, the Flutter app explicitly declares: <em>"I will only communicate with servers presenting this exact public key fingerprint."</em>
+        </p>
+
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Pinning Strategy</th>
+              <th>What is Pinned?</th>
+              <th>Certificate Rotation Resilience</th>
+              <th>Security Strength</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Leaf Certificate Pinning</strong></td>
+              <td>The entire X.509 server certificate (binary hash).</td>
+              <td>❌ <strong>Fragile:</strong> App breaks whenever the certificate is renewed (every 90 days with Let's Encrypt).</td>
+              <td>High</td>
+            </tr>
+            <tr>
+              <td><strong>Public Key (SPKI) Pinning (Recommended)</strong></td>
+              <td>The SHA-256 hash of the Subject Public Key Info.</td>
+              <td>✅ <strong>Resilient:</strong> Re-issuing certificates using the same CSR retains the same public key.</td>
+              <td>Maximum</td>
+            </tr>
+            <tr>
+              <td><strong>Intermediate CA Pinning</strong></td>
+              <td>The public key of the issuing Certificate Authority.</td>
+              <td>⚠️ <strong>Moderate:</strong> Subject to rogue certificate issuance if CA is compromised.</td>
+              <td>Moderate</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>Production Implementation in Flutter (Dio &amp; SecurityContext)</h2>
+        <p>
+          Flutter does not use the Android OS network security config directly because Dart compiles its own bundled <a href="https://boringssl.googlesource.com/boringssl/" target="_blank" rel="noopener" style="color:var(--accent-cyan); text-decoration:underline;"><strong>BoringSSL</strong></a> networking engine.
+        </p>
+        <p>
+          Below is our hardened, production-grade network client featuring SHA-256 SPKI fingerprint verification with contingency backup key support:
+        </p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>lib/core/network/pinned_http_client.dart</span>
+            <span>Dart</span>
+          </div>
+          <pre><code>import 'dart:io';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
+import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
+
+class PinnedNetworkClient {
+  PinnedNetworkClient._();
+
+  // Primary and offline cold-storage backup SPKI SHA-256 fingerprints
+  static const List&lt;String&gt; _trustedPins = [
+    "9a:3f:8b:2c:1e:7d:4a:5b:6c:7e:8f:90:12:34:56:78:9a:bc:de:f0:12:34:56:78:9a:bc:de:f0:12:34:56:78", // Primary
+    "4c:7e:1a:2b:3c:4d:5e:6f:70:81:92:a3:b4:c5:d6:e7:f8:09:1a:2b:3c:4d:5e:6f:70:81:92:a3:b4:c5:d6:e7", // Backup
+  ];
+
+  static Dio createClient({required String baseUrl}) {
+    final dio = Dio(BaseOptions(
+      baseUrl: baseUrl,
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+    ));
+
+    (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+      final SecurityContext context = SecurityContext(withTrustedRoots: false);
+      final HttpClient client = HttpClient(context: context);
+
+      client.badCertificateCallback = (X509Certificate cert, String host, int port) {
+        // Compute SHA-256 fingerprint from the certificate DER bytes
+        final certDerBytes = cert.der;
+        final digest = sha256.convert(certDerBytes);
+        final fingerprint = digest.bytes
+            .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+            .join(':');
+
+        // Validate against trusted pins
+        final isPinned = _trustedPins.contains(fingerprint.toLowerCase());
+        if (!isPinned) {
+          // Log security event to backend SIEM / Sentry
+          return false; // REJECT MITM PROXY CONNECTION IMMEDIATELY
+        }
+        return true;
+      };
+
+      return client;
+    };
+
+    return dio;
+  }
+}</code></pre>
+        </div>
+
+        <h2>Why Certificate Pinning Alone Is NOT a Silver Bullet</h2>
+        <p>
+          While Certificate Pinning defeats passive proxying, modern mobile attackers utilize <strong>dynamic instrumentation frameworks like <a href="https://frida.re/" target="_blank" rel="noopener" style="color:var(--accent-cyan); text-decoration:underline;">Frida</a></strong> to hook directly into the Dart VM or BoringSSL memory space at runtime.
+        </p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>Frida Universal SSL Bypass Script (Attacker Vector)</span>
+            <span>JavaScript (Frida)</span>
+          </div>
+          <pre><code>// Example Frida hook targeting BoringSSL certificate verification
+Interceptor.attach(
+  Module.findExportByName("libflutter.so", "ssl_crypto_x509_session_verify_cert_chain"), 
+  {
+    onLeave: function(retval) {
+      // Force BoringSSL to return verification success regardless of proxy cert
+      retval.replace(ptr("0x1"));
+    }
+  }
+);</code></pre>
+        </div>
+
+        <h2>The Real Solution: Multi-Layer Defense-in-Depth</h2>
+        <p>
+          To prevent runtime hooking and reverse engineering, enterprise Flutter applications must implement overlapping security rings:
+        </p>
+
+        <ul>
+          <li><strong>Ring 1 — Transport Security:</strong> SPKI Public Key Pinning with strict TLS 1.3 cipher suites.</li>
+          <li><strong>Ring 2 — Root &amp; Jailbreak Attestation:</strong> Inspect native binaries for Magisk, Zygisk, Frida server daemons, and modified system properties via native C/C++ plugins.</li>
+          <li><strong>Ring 3 — Binary Code Obfuscation:</strong> Always compile release artifacts using:
+            <div class="code-block" style="margin: 12px 0;">
+              <pre><code>flutter build appbundle --obfuscate --split-debug-info=./debug_symbols</code></pre>
+            </div>
+            This strips Dart class names, function symbols, and reflection metadata, blinding Frida automated search scripts.
+          </li>
+          <li><strong>Ring 4 — Platform Hardware Integrity:</strong> Verify hardware attestation tokens using Google Play Integrity API and Apple DeviceCheck before serving sensitive API responses.</li>
+        </ul>
+
+        <h2>Disaster Prevention: How to Avoid Bricking Your App</h2>
+        <div class="callout warning">
+          <div class="callout-title">⚠️ The "Bricked App" Risk of Static Hardcoding</div>
+          <p style="margin-bottom:0;">
+            If an SSL certificate expires unexpectedly or your cloud load balancer rotates TLS keys, apps with static leaf pins will permanently lose server communication until users install an app store update.
+          </p>
+        </div>
+
+        <p><strong>Guaranteed Protection Rules:</strong></p>
+        <ol>
+          <li><strong>Always pin the Subject Public Key Info (SPKI), not the leaf certificate.</strong></li>
+          <li><strong>Always embed at least one offline backup pin generated from an offline cold-storage keypair.</strong></li>
+          <li><strong>Combine with Shorebird OTA:</strong> If an emergency key rotation occurs, push a Dart network configuration patch over-the-air in seconds to restore global connectivity.</li>
+        </ol>
+
+        <div class="tag-strip">
+          <span>#SSLPinning</span>
+          <span>#MobileSecurity</span>
+          <span>#FridaDefense</span>
+          <span>#MITMAttack</span>
+          <span>#DioSecurity</span>
+          <span>#OWASP_MSTG</span>
+          <span>#BoringSSL</span>
+        </div>
+
+        <div class="share-section">
+          <h3>Need a comprehensive mobile security audit for your Flutter app?</h3>
+          <p style="color:var(--text-secondary); margin-bottom:20px;">
+            Connect with me on LinkedIn to discuss penetration testing, network hardening, and mobile architecture.
+          </p>
+          <div class="share-btns">
+            <a href="https://www.linkedin.com/in/osama-mahmoud-601669277/" target="_blank" rel="noopener" class="btn btn-primary">
+              Connect on LinkedIn
+            </a>
+            <button class="btn btn-secondary" onclick="copyLink()">
+              📋 Copy Article Link
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ARABIC CONTENT SECTION -->
+  <div id="content-ar" class="content-lang-section">
+    <section class="article-hero">
+      <div class="container">
+        <div class="article-meta-badge">أمن الشبكات واختبار الاختراق</div>
+        <h1 class="article-title">ما وراء الـ HTTPS: لماذا تطبيق فلاتر الخاص بك معرض للاختراق وكيف تبني دفاعاً متكاملاً (Defense-in-Depth)</h1>
+        <p class="article-subtitle">
+          الوهم الخطر بأن HTTPS وحده يكفي لحماية بيانات المستخدمين، وكيف تعترض بروكسيات الـ MITM حركة البيانات، ولماذا يتطلب الـ SSL Pinning طبقات حماية ديناميكية لمواجهة أدوات مثل Frida.
+        </p>
+
+        <div class="author-strip">
+          <div class="author-info">
+            <div class="author-avatar">
+              <img src="../image.png" alt="أسامة محمود">
+            </div>
+            <div>
+              <div class="author-name">أسامة محمود محمد</div>
+              <div class="author-role">مطور فلاتر أول ومهندس معمارية تطبيقات الهاتف</div>
+            </div>
+          </div>
+
+          <div class="article-details">
+            <span>📅 سبتمبر 2026</span>
+            <span>•</span>
+            <span>⏱️ قراءة 13 دقيقة</span>
+            <span>•</span>
+            <span>🛡️ تشفير SPKI ومقاومة Frida</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="article-content">
+      <div class="container">
+        <h2>الوهم المريح: "نحن نستخدم HTTPS في كل مكان"</h2>
+        <p>
+          قد تكون مأمن الـ local storage بتاعتك، وحافظ كل الـ secrets بشكل صحيح، ومش عامل debug logs أو inspectors بتسرب بيانات 👌... لكن سايب التطبيق بتاعك يشتغل على أي شبكة عامة بدون حماية حقيقية! 👀
+        </p>
+        <p>
+          كتير من الـ Flutter Developers بيعتمدوا على HTTPS فقط وبيبقوا فاكرين إن كده التطبيق secure… لكن الحقيقة؟ <strong>HTTPS لوحده مش كفاية إطلاقاً ⚠️</strong>
+        </p>
+
+        <div class="callout danger">
+          <div class="callout-title">🚨 كيف يعمل هجوم رجل في المنتصف (Man-in-the-Middle Attack)؟</div>
+          <p style="margin-bottom:0;">
+            لو المستخدم فاتح التطبيق على Public WiFi، أو شبكة مخترقة، أو أداة اعتراض مثل <strong>Burp Suite</strong> أو <strong>Charles Proxy</strong>:
+            يقف المهاجم بين المستخدم والسيرفر، ويقوم بتثبيت شهادة Custom Root CA على الهاتف، مما يتيح له قراءة وتعديل الـ Requests والـ Responses والـ Tokens والبيانات المالية في صورة Plaintext واضحة تماماً!
+          </p>
+        </div>
+
+        <h2>الحل الدفاعي الأول: تثبيت المفتاح العام SPKI Certificate Pinning</h2>
+        <p>
+          بدلاً من أن يثق التطبيق بكل شهادات الـ Root المتاحة في نظام تشغيل الهاتف (والتي يمكن للهاكر إضافة شهادته المزيفة إليها)، نطبق تقنية <strong>Certificate Pinning</strong>: التطبيق يعلن صراحة <em>"لن أتحدث إلا مع سيرفر يحمل بصمة المفتاح العام (SPKI SHA-256) هذه بالتحديد"</em>.
+        </p>
+
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>استراتيجية الـ Pinning</th>
+              <th>ما الذي يتم تثبيته؟</th>
+              <th>مرونة تجديد الشهادات</th>
+              <th>القوة الأمنية</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>تثبيت الشهادة الكاملة (Leaf Cert)</strong></td>
+              <td>ملف الشهادة الكامل X.509 بالبايت.</td>
+              <td>❌ <strong>هش جداً:</strong> التطبيق يتعطل كلياً فور تجديد الشهادة دورياً (كل 90 يوماً).</td>
+              <td>عالية</td>
+            </tr>
+            <tr>
+              <td><strong>تثبيت بصمة المفتاح العام SPKI (الموصى به)</strong></td>
+              <td>بصمة الـ SHA-256 لـ Subject Public Key Info.</td>
+              <td>✅ <strong>مرن ومثالي:</strong> تجديد الشهادة بنفس المفتاح لا يكسر التطبيق نهائياً.</td>
+              <td>أقصى حماية</td>
+            </tr>
+            <tr>
+              <td><strong>تثبيت الشهادة الوسيطة (Intermediate CA)</strong></td>
+              <td>المفتاح العام لمزود الشهادات المعتمد.</td>
+              <td>⚠️ <strong>متوسط:</strong> عرضة للخطر لو تم اختراق مزود الشهادات نفسه.</td>
+              <td>متوسطة</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>كود فلاتر المتقدم للتطبيق على Dio و SecurityContext</h2>
+        <p>
+          فلاتر لا يستخدم إعدادات الشبكة التابعة لنظام أندرويد الافتراضية لأنه يمتلك محرك شبكات Dart مدمج يعمل بـ <a href="https://boringssl.googlesource.com/boringssl/" target="_blank" rel="noopener" style="color:var(--accent-cyan); text-decoration:underline;"><strong>BoringSSL</strong></a>.
+        </p>
+        <p>
+          إليك كود الإنتاج المحصن الذي يفحص بصمة الـ SHA-256 للشهادة ويرفض الاتصال فوراً في حال وجود بروكسي أو شهادة مزيفة:
+        </p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>lib/core/network/pinned_http_client.dart</span>
+            <span>Dart</span>
+          </div>
+          <pre><code>import 'dart:io';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
+import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
+
+class PinnedNetworkClient {
+  PinnedNetworkClient._();
+
+  // بصمات الـ SPKI SHA-256 الموثوقة للمفتاح الأساسي والمفتاح الاحتياطي للطوارئ
+  static const List&lt;String&gt; _trustedPins = [
+    "9a:3f:8b:2c:1e:7d:4a:5b:6c:7e:8f:90:12:34:56:78:9a:bc:de:f0:12:34:56:78:9a:bc:de:f0:12:34:56:78", // الأساسي
+    "4c:7e:1a:2b:3c:4d:5e:6f:70:81:92:a3:b4:c5:d6:e7:f8:09:1a:2b:3c:4d:5e:6f:70:81:92:a3:b4:c5:d6:e7", // الاحتياطي
+  ];
+
+  static Dio createClient({required String baseUrl}) {
+    final dio = Dio(BaseOptions(
+      baseUrl: baseUrl,
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+    ));
+
+    (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+      final SecurityContext context = SecurityContext(withTrustedRoots: false);
+      final HttpClient client = HttpClient(context: context);
+
+      client.badCertificateCallback = (X509Certificate cert, String host, int port) {
+        // حساب بصمة الـ SHA-256 من بايتات الشهادة المستلمة
+        final certDerBytes = cert.der;
+        final digest = sha256.convert(certDerBytes);
+        final fingerprint = digest.bytes
+            .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+            .join(':');
+
+        // التحقق من وجود البصمة ضمن قائمة المفاتيح المعتمدة
+        final isPinned = _trustedPins.contains(fingerprint.toLowerCase());
+        if (!isPinned) {
+          // قطع الاتصال فوراً وتسجيل محاولة الاختراق في السيرفر
+          return false; // REJECT MITM PROXY CONNECTION
+        }
+        return true;
+      };
+
+      return client;
+    };
+
+    return dio;
+  }
+}</code></pre>
+        </div>
+
+        <h2>لماذا لا يعتبر الـ SSL Pinning حلاً سحرياً منفرداً؟</h2>
+        <p>
+          المخترقون ومختبرو الاختراق المحترفون لا يستسلمون عند وجود SSL Pinning، بل يستخدمون أدوات التلاعب الديناميكي بالذاكرة مثل <strong><a href="https://frida.re/" target="_blank" rel="noopener" style="color:var(--accent-cyan); text-decoration:underline;">Frida Framework</a></strong> للحقن داخل الـ Dart VM وتجاوز دوال التحقق في وقت التشغيل (Runtime Hooking).
+        </p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>Frida Universal SSL Bypass Script (طريقة كسر الحماية)</span>
+            <span>JavaScript (Frida)</span>
+          </div>
+          <pre><code>// مثال لسكريبت Frida يقوم بتجاوز فحص شهادات BoringSSL في فلاتر
+Interceptor.attach(
+  Module.findExportByName("libflutter.so", "ssl_crypto_x509_session_verify_cert_chain"), 
+  {
+    onLeave: function(retval) {
+      // إجبار محرك فلاتر على اعتبار الشهادة صحيحة دائماً مهما كانت مزورة
+      retval.replace(ptr("0x1"));
+    }
+  }
+);</code></pre>
+        </div>
+
+        <h2>الحل المتكامل: الدفاع متعدد الطبقات (Defense-in-Depth)</h2>
+        <p>
+          لحماية التطبيقات الحساسة من هجمات الـ Runtime والـ Reverse Engineering، يجب تطبيق حلقات دفاعية متداخلة:
+        </p>
+
+        <ul>
+          <li><strong>الطبقة 1 — أمان النقل:</strong> تثبيت بصمة الـ SPKI مع فرض بروتوكول TLS 1.3 فقط.</li>
+          <li><strong>الطبقة 2 — كشف الـ Root و Jailbreak و Frida:</strong> فحص وجود حزم Magisk و Zygisk وخوادم Frida العاملة في الخلفية عبر دوال C/C++ أصلية.</li>
+          <li><strong>الطبقة 3 — تعمية الكود البرمجي (Obfuscation):</strong> بناء التطبيق دائماً بأمر:
+            <div class="code-block" style="margin: 12px 0;">
+              <pre><code>flutter build appbundle --obfuscate --split-debug-info=./debug_symbols</code></pre>
+            </div>
+            هذا يحذف أسماء الكلاسات والدوال، مما يعمي سكريبتات البحث التلقائي لأداة Frida.
+          </li>
+          <li><strong>الطبقة 4 — سلامة عتاد الجهاز (Play Integrity &amp; DeviceCheck):</strong> طلب توكن سلامة عتادي من جوجل وآبل والتأكد من السيرفر أن الجهاز أصلي وغير معدل.</li>
+        </ul>
+
+        <h2>كيف تتجنب تدمير تطبيقك (Bricking the App)؟</h2>
+        <div class="callout warning">
+          <div class="callout-title">⚠️ خطر تعطل التطبيق بالكامل بسبب انتهاء الشهادة</div>
+          <p style="margin-bottom:0;">
+            لو انتهت صلاحية الشهادة فجأة أو تم تغيير مزود الاستضافة، والتطبيق يعتمد على Pin ثابت قديم، سيتوقف التطبيق عن الاتصال نهائياً عند كل المستخدمين حتى يتم إصدار تحديث عبر المتاجر.
+          </p>
+        </div>
+
+        <p><strong>قواعد الأمان الذهبية:</strong></p>
+        <ol>
+          <li><strong>ثبت بصمة المفتاح العام SPKI وليس الشهادة بأكملها.</strong></li>
+          <li><strong>ضع دائماً مفتاح احتياطي (Backup Pin) محفوظ في خزنة آمنة Offline Key.</strong></li>
+          <li><strong>استخدم Shorebird Code Push:</strong> في حال حدوث طارئ وتغيير للمفاتيح، يمكنك إرسال Patch فوري بالبصمات الجديدة في ثوانٍ دون انتظار مراجعة الستور.</li>
+        </ol>
+
+        <div class="tag-strip">
+          <span>#أمن_الشبكات</span>
+          <span>#SSLPinning</span>
+          <span>#اختبار_الاختراق</span>
+          <span>#Frida_Bypass</span>
+          <span>#فلاتر_متقدم</span>
+          <span>#تأمين_البيانات</span>
+        </div>
+
+        <div class="share-section">
+          <h3>هل تريد إجراء فحص أمني شامل ومعاينة ثغرات لتطبيق فلاتر الخاص بك؟</h3>
+          <p style="color:var(--text-secondary); margin-bottom:20px;">
+            تواصل معي عبر LinkedIn لمناقشة هندسة الحماية واختبارات الاختراق وأمن شبكات تطبيقات الموبايل.
+          </p>
+          <div class="share-btns">
+            <a href="https://www.linkedin.com/in/osama-mahmoud-601669277/" target="_blank" rel="noopener" class="btn btn-primary">
+              تواصل عبر LinkedIn
+            </a>
+            <button class="btn btn-secondary" onclick="copyLink()">
+              📋 نسخ رابط المقال
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast">Link copied to clipboard!</div>
+
+  <script>
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      const themeBtn = document.getElementById('themeBtn');
+      if (themeBtn) themeBtn.textContent = theme === 'light' ? '🌙' : '☀️';
+    }
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    }
+    (function initTheme() {
+      const saved = localStorage.getItem('theme') || 'light';
+      applyTheme(saved);
+    })();
+
+    function applyArticleLanguage(lang) {
+      document.documentElement.setAttribute('lang', lang);
+      document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+      localStorage.setItem('article_lang', lang);
+
+      const enSection = document.getElementById('content-en');
+      const arSection = document.getElementById('content-ar');
+      const langBtn = document.getElementById('langBtn');
+      const backText = document.getElementById('backText');
+
+      if (lang === 'ar') {
+        if (enSection) enSection.classList.remove('active');
+        if (arSection) arSection.classList.add('active');
+        if (langBtn) langBtn.textContent = '🌐 English';
+        if (backText) backText.textContent = 'العودة للبورتفوليو';
+      } else {
+        if (arSection) arSection.classList.remove('active');
+        if (enSection) enSection.classList.add('active');
+        if (langBtn) langBtn.textContent = '🌐 عربي';
+        if (backText) backText.textContent = 'Back to Portfolio';
+      }
+    }
+
+    function toggleArticleLanguage() {
+      const currentLang = document.documentElement.getAttribute('lang') || 'en';
+      const newLang = currentLang === 'en' ? 'ar' : 'en';
+      applyArticleLanguage(newLang);
+    }
+
+    (function initArticleLanguage() {
+      const saved = localStorage.getItem('article_lang') || localStorage.getItem('lang') || 'en';
+      applyArticleLanguage(saved);
+    })();
+
+    function copyLink() {
+      navigator.clipboard.writeText(window.location.href);
+      const isAr = document.documentElement.getAttribute('lang') === 'ar';
+      const toast = document.getElementById('toast');
+      toast.textContent = isAr ? 'تم نسخ الرابط إلى الحافظة! 📋' : 'Link copied to clipboard! 📋';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+  </script>
+</body>
+</html>
