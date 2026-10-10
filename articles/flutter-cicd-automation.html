@@ -538,7 +538,7 @@
         <button class="lang-toggle-btn" onclick="toggleArticleLanguage()" aria-label="Toggle Language" id="langBtn">
           🌐 عربي
         </button>
-        <button class="btn-icon" onclick="toggleTheme()" aria-label="Toggle Theme" id="themeBtn">☀️</button>
+        
       </div>
     </div>
   </header>
@@ -972,11 +972,10 @@ shorebird preview --track=production</code></pre>
     }
     function toggleTheme() {
       const current = document.documentElement.getAttribute('data-theme') || 'light';
-      applyTheme(current === 'dark' ? 'light' : 'dark');
+      applyTheme('light');
     }
     (function initTheme() {
-      const saved = localStorage.getItem('theme') || 'light';
-      applyTheme(saved);
+      applyTheme('light');
     })();
 
     function applyArticleLanguage(lang) {

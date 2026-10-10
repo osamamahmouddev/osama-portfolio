@@ -540,7 +540,7 @@
       </a>
       <div style="display:flex; align-items:center; gap:10px;">
         <button class="lang-toggle-btn" id="langBtn" onclick="toggleArticleLanguage()">🌐 عربي</button>
-        <button class="btn-icon" onclick="toggleTheme()" aria-label="Toggle Theme" id="themeBtn">🌙</button>
+        
       </div>
     </div>
   </header>
@@ -1018,11 +1018,10 @@ Interceptor.attach(
     }
     function toggleTheme() {
       const current = document.documentElement.getAttribute('data-theme') || 'light';
-      applyTheme(current === 'dark' ? 'light' : 'dark');
+      applyTheme('light');
     }
     (function initTheme() {
-      const saved = localStorage.getItem('theme') || 'light';
-      applyTheme(saved);
+      applyTheme('light');
     })();
 
     function applyArticleLanguage(lang) {
