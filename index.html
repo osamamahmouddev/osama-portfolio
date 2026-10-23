@@ -10,7 +10,7 @@
   <meta name="keywords" content="Osama Mahmoud, أسامة محمود, Flutter Developer, Mobile Architect, Flutter Security, SSL Pinning, Frida, Shorebird, Fastlane, CI/CD, Clean Architecture, BLoC Pattern, Dart, Cairo, Egypt, Senior Flutter Engineer">
   <meta name="author" content="Osama Mahmoud Mohamed">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-  <meta name="theme-color" content="#0284C7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#7C3AED" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#030712" media="(prefers-color-scheme: dark)">
 
   <!-- Canonical Link -->
@@ -114,10 +114,10 @@
       --bg-card: rgba(255, 255, 255, 0.94);
       --bg-card-hover: #FFFFFF;
       --border-subtle: #E2E8F0;
-      --border-bright: rgba(2, 132, 199, 0.45);
-      --border-focus: #0284C7;
+      --border-bright: rgba(124, 58, 237, 0.45);
+      --border-focus: #7C3AED;
 
-      --accent-cyan: #0284C7; /* High-contrast Sapphire / Sky Blue */
+      --accent-cyan: #7C3AED; /* High-contrast Sapphire / Sky Blue */
       --accent-blue: #2563EB;
       --accent-indigo: #4F46E5;
       --accent-amber: #D97706;
@@ -137,11 +137,11 @@
       --radius-xl: 28px;
       --radius-full: 9999px;
 
-      --shadow-glow: 0 8px 30px -4px rgba(2, 132, 199, 0.18);
+      --shadow-glow: 0 8px 30px -4px rgba(124, 58, 237, 0.18);
       --shadow-card: 0 8px 26px -4px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
       --ambient-opacity: 0.14;
       --grid-opacity: 0.035;
-      --avatar-bg: radial-gradient(circle at 50% 35%, rgba(2, 132, 199, 0.14) 0%, rgba(241, 245, 249, 0.98) 75%);
+      --avatar-bg: radial-gradient(circle at 50% 35%, rgba(124, 58, 237, 0.14) 0%, rgba(241, 245, 249, 0.98) 75%);
 
       --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -389,8 +389,8 @@
       margin-bottom: 16px;
     }
     [data-theme="light"] .badge-eyebrow {
-      background: rgba(2, 132, 199, 0.08);
-      border-color: rgba(2, 132, 199, 0.25);
+      background: rgba(124, 58, 237, 0.08);
+      border-color: rgba(124, 58, 237, 0.25);
     }
 
     .badge-eyebrow::before {
@@ -430,15 +430,15 @@
     }
     [data-theme="light"] .btn-primary {
       color: #FFFFFF;
-      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.25);
+      box-shadow: 0 4px 15px rgba(124, 58, 237, 0.25);
     }
     .btn-primary:hover {
       transform: translateY(-2px);
       box-shadow: 0 0 30px rgba(0, 245, 212, 0.5);
     }
     [data-theme="light"] .btn-primary:hover {
-      background: #0369A1;
-      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.35);
+      background: #6D28D9;
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35);
     }
 
     .btn-secondary {
@@ -602,25 +602,40 @@
       font-weight: 700;
       font-size: 1.05rem;
       letter-spacing: -0.02em;
+      min-width: 0;
+      flex: 0 1 auto;
+    }
+
+    .brand-logo > div:last-child {
+      min-width: 0;
+    }
+
+    .brand-logo > div:last-child > span,
+    .brand-logo .brand-tag {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .brand-logo .logo-icon {
       width: 38px;
       height: 38px;
+      flex-shrink: 0;
       border-radius: 10px;
-      background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);
+      background: linear-gradient(135deg, #7C3AED 0%, #2563EB 100%);
       border: none;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #FFFFFF;
       font-size: 1.15rem;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     .brand-logo:hover .logo-icon {
       transform: rotate(-8deg) translateY(-2px);
-      box-shadow: 0 6px 18px rgba(2, 132, 199, 0.4);
+      box-shadow: 0 6px 18px rgba(124, 58, 237, 0.4);
     }
 
     .brand-logo .brand-tag {
@@ -659,7 +674,7 @@
 
     nav.nav-menu a:hover,
     nav.nav-menu a.active {
-      color: #0284C7;
+      color: #7C3AED;
       background: #FFFFFF;
       box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
     }
@@ -834,7 +849,7 @@
 
     .avatar-card:hover {
       border-color: var(--accent-cyan);
-      box-shadow: 0 25px 50px -12px rgba(2, 132, 199, 0.2);
+      box-shadow: 0 25px 50px -12px rgba(124, 58, 237, 0.2);
     }
 
     .avatar-header {
@@ -859,7 +874,7 @@
       overflow: hidden;
       border: 1px solid #E2E8F0;
       margin-bottom: 20px;
-      background: radial-gradient(circle at 50% 35%, rgba(2, 132, 199, 0.12) 0%, rgba(241, 245, 249, 0.98) 75%);
+      background: radial-gradient(circle at 50% 35%, rgba(124, 58, 237, 0.12) 0%, rgba(241, 245, 249, 0.98) 75%);
       display: flex;
       align-items: flex-end;
       justify-content: center;
@@ -1142,7 +1157,7 @@
     .layer-1 .arch-layer-badge { background: rgba(0, 245, 212, 0.15); color: var(--accent-cyan); }
     .layer-2 .arch-layer-badge { background: rgba(56, 189, 248, 0.15); color: var(--accent-blue); }
     .layer-3 .arch-layer-badge { background: rgba(129, 140, 248, 0.15); color: var(--accent-indigo); }
-    [data-theme="light"] .layer-1 .arch-layer-badge { background: rgba(2, 132, 199, 0.12); color: var(--accent-cyan); }
+    [data-theme="light"] .layer-1 .arch-layer-badge { background: rgba(124, 58, 237, 0.12); color: var(--accent-cyan); }
 
     .arch-layer-card h4 {
       font-size: 1.1rem;
@@ -1268,7 +1283,7 @@
       color: var(--accent-cyan);
     }
     [data-theme="light"] .timeline-badge {
-      background: rgba(2, 132, 199, 0.1);
+      background: rgba(124, 58, 237, 0.1);
     }
 
     .timeline-bullets {
@@ -1357,7 +1372,7 @@
       font-size: 1.25rem;
     }
     [data-theme="light"] .skill-card-icon {
-      background: rgba(2, 132, 199, 0.1);
+      background: rgba(124, 58, 237, 0.1);
     }
 
     .skill-module-num {
@@ -1433,7 +1448,7 @@
 
     [data-theme="light"] .project-card:hover {
       border-color: var(--accent-cyan);
-      box-shadow: 0 20px 40px -10px rgba(2, 132, 199, 0.18);
+      box-shadow: 0 20px 40px -10px rgba(124, 58, 237, 0.18);
     }
 
     .app-icon-wrapper {
@@ -1526,6 +1541,17 @@
       color: #f97316;
     }
 
+    .app-type-pill.soon-pill {
+      background: rgba(217, 119, 6, 0.12);
+      border-color: rgba(217, 119, 6, 0.4);
+      color: var(--accent-amber);
+      animation: soonPulse 2.4s ease-in-out infinite;
+    }
+    @keyframes soonPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.25); }
+      50% { box-shadow: 0 0 0 6px rgba(217, 119, 6, 0); }
+    }
+
     .app-playstore-icon, .app-apple-icon {
       display: inline-flex;
       align-items: center;
@@ -1596,7 +1622,7 @@
       background: var(--accent-cyan);
       border-color: var(--accent-cyan);
       color: #ffffff;
-      box-shadow: 0 4px 18px rgba(2, 132, 199, 0.3);
+      box-shadow: 0 4px 18px rgba(124, 58, 237, 0.3);
     }
 
     .project-badge-status {
@@ -1670,9 +1696,16 @@
       text-decoration: none;
     }
     [data-theme="light"] .store-btn {
-      background: rgba(2, 132, 199, 0.08);
-      border-color: rgba(2, 132, 199, 0.25);
+      background: rgba(124, 58, 237, 0.08);
+      border-color: rgba(124, 58, 237, 0.25);
       color: var(--accent-cyan);
+    }
+
+    .store-btn-soon {
+      background: rgba(217, 119, 6, 0.1);
+      border-color: rgba(217, 119, 6, 0.3);
+      color: var(--accent-amber);
+      cursor: default;
     }
 
     .store-btn:hover {
@@ -1772,8 +1805,8 @@
       border-radius: var(--radius-full);
     }
     [data-theme="light"] .article-category {
-      background: rgba(2, 132, 199, 0.08);
-      border-color: rgba(2, 132, 199, 0.25);
+      background: rgba(124, 58, 237, 0.08);
+      border-color: rgba(124, 58, 237, 0.25);
       color: var(--accent-cyan);
     }
 
@@ -1863,7 +1896,7 @@
     }
     [data-theme="light"] .featured-article-card {
       background: linear-gradient(135deg, #FFFFFF, #F8FAFC);
-      box-shadow: 0 10px 30px rgba(2, 132, 199, 0.12);
+      box-shadow: 0 10px 30px rgba(124, 58, 237, 0.12);
     }
 
     .featured-article-card::before {
@@ -1900,7 +1933,7 @@
     }
     [data-theme="light"] .featured-badge {
       color: #FFFFFF;
-      background: #0284C7;
+      background: #7C3AED;
     }
 
     .featured-article-title {
@@ -2138,7 +2171,7 @@
       flex-shrink: 0;
     }
     [data-theme="light"] .edu-icon {
-      background: rgba(2, 132, 199, 0.1);
+      background: rgba(124, 58, 237, 0.1);
     }
 
     .edu-details h3 {
@@ -2482,6 +2515,44 @@
       }
       .cv-banner-grid {
         grid-template-columns: 1fr;
+      }
+    }
+
+    /* Fix: between 769px and 960px the desktop nav pill squeezed the brand
+       logo into wrapping/clipping against the header. Collapse to the
+       mobile hamburger earlier so there's no cramped zone. */
+    @media (max-width: 1120px) {
+      nav.nav-menu {
+        display: none;
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-height: calc(100dvh - 70px);
+        overflow-y: auto;
+        background: var(--bg-surface);
+        background: color-mix(in srgb, var(--bg-surface) 96%, transparent);
+        backdrop-filter: blur(18px);
+        border-bottom: 1px solid var(--border-subtle);
+        flex-direction: column;
+        padding: 18px 16px 24px;
+        gap: 8px;
+        z-index: 110;
+      }
+
+      nav.nav-menu a {
+        width: 100%;
+        padding: 13px 10px;
+        text-align: center;
+      }
+
+      .nav-menu.open {
+        display: flex;
+      }
+
+      .mobile-menu-btn {
+        display: inline-flex;
       }
     }
 
@@ -3301,7 +3372,7 @@
             A real-time GPS attendance and employee monitoring system with anti-spoofing verification, dynamic geofencing, and multi-tier organizational dashboards...
           </p>
           <div class="app-badge-area">
-            <span class="app-type-pill">ENTERPRISE APP</span>
+            <span class="app-type-pill soon-pill" id="checkpointSoonPill">🚀 COMING SOON</span>
           </div>
           <button class="btn-view-details" onclick="openProjectModal('checkpoint')">
             VIEW DETAILS
@@ -4103,7 +4174,7 @@
       viewDetailsBtns.forEach(btn => {
         btn.textContent = t.viewDetailsBtn || (lang === 'ar' ? 'عرض التفاصيل' : 'VIEW DETAILS');
       });
-      const appTypePills = document.querySelectorAll('.projects-grid .app-type-pill');
+      const appTypePills = document.querySelectorAll('.projects-grid .app-type-pill:not(.soon-pill)');
       appTypePills.forEach(pill => {
         if (pill.classList.contains('milestone-pill')) {
           pill.textContent = lang === 'ar' ? '🎉 +10K تنزيل' : '🎉 10K+ DL';
@@ -4111,6 +4182,8 @@
           pill.textContent = lang === 'ar' ? 'تطبيق موبايل' : 'MOBILE APP';
         }
       });
+      const soonPill = document.getElementById('checkpointSoonPill');
+      if (soonPill) soonPill.textContent = lang === 'ar' ? '🚀 قريباً على المتاجر' : '🚀 COMING SOON';
       const milestoneBadge = document.querySelector('.milestone-badge-card');
       if (milestoneBadge) {
         milestoneBadge.innerHTML = lang === 'ar' ? '<span>✨</span> +10K تنزيل 🎉' : '<span>✨</span> 10K+ DL 🎉';
@@ -4213,7 +4286,7 @@
         draw(isLight) {
           ctx.beginPath();
           ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-          ctx.fillStyle = isLight ? 'rgba(2, 132, 199, 0.45)' : 'rgba(0, 245, 212, 0.45)';
+          ctx.fillStyle = isLight ? 'rgba(124, 58, 237, 0.45)' : 'rgba(0, 245, 212, 0.45)';
           ctx.fill();
         }
       }
@@ -4250,7 +4323,7 @@
               ctx.moveTo(particles[i].x, particles[i].y);
               ctx.lineTo(particles[j].x, particles[j].y);
               ctx.strokeStyle = isLight 
-                ? `rgba(2, 132, 199, ${0.15 * (1 - dist / 130)})` 
+                ? `rgba(124, 58, 237, ${0.15 * (1 - dist / 130)})` 
                 : `rgba(56, 189, 248, ${0.15 * (1 - dist / 130)})`;
               ctx.lineWidth = 0.8;
               ctx.stroke();
@@ -4267,7 +4340,7 @@
               ctx.moveTo(particles[i].x, particles[i].y);
               ctx.lineTo(mouse.x, mouse.y);
               ctx.strokeStyle = isLight 
-                ? `rgba(2, 132, 199, ${0.3 * (1 - dist / 150)})` 
+                ? `rgba(124, 58, 237, ${0.3 * (1 - dist / 150)})` 
                 : `rgba(0, 245, 212, ${0.3 * (1 - dist / 150)})`;
               ctx.lineWidth = 1.1;
               ctx.stroke();
@@ -4454,8 +4527,16 @@
           "إدارة مؤتمتة للإجازات ولوحات تحكم بيانية فورية لأداء الفرق."
         ],
         tech: ["Flutter", "Google Maps API", "Geofencing", "Clean Arch", "Firebase", "Biometrics"],
+        screenshots: [
+          "assets/screenshots/checkpoint/screen_2.jpg",
+          "assets/screenshots/checkpoint/screen_3.jpg",
+          "assets/screenshots/checkpoint/screen_4.jpg",
+          "assets/screenshots/checkpoint/screen_5.jpg",
+          "assets/screenshots/checkpoint/screen_6.jpg"
+        ],
         appStore: null,
         googlePlay: null,
+        comingSoon: true,
         web: "https://systmgulf.com/products.html"
       },
       elbedaa: {
@@ -4512,11 +4593,11 @@
         ],
         tech: ["Flutter", "BLoC", "WebSockets", "Google Maps", "Realtime DB", "State Management"],
         screenshots: [
-          "assets/screenshots/enjaz/screen_2.jpg",
-          "assets/screenshots/enjaz/screen_3.jpg",
-          "assets/screenshots/enjaz/screen_4.jpg",
-          "assets/screenshots/enjaz/screen_5.jpg",
-          "assets/screenshots/enjaz/screen_6.jpg"
+          "assets/screenshots/enjaz/screen_2.jpg?v=2",
+          "assets/screenshots/enjaz/screen_3.jpg?v=2",
+          "assets/screenshots/enjaz/screen_4.jpg?v=2",
+          "assets/screenshots/enjaz/screen_5.jpg?v=2",
+          "assets/screenshots/enjaz/screen_6.jpg?v=2"
         ],
         appStore: "https://apps.apple.com/ph/app/enjaz-eg/id6785322840",
         googlePlay: "https://play.google.com/store/apps/details?id=com.nexteramea.enjaz",
@@ -4601,7 +4682,7 @@
 
       const count = 90;
       const pieces = [];
-      const colors = ['#10B981', '#059669', '#0284C7', '#38BDF8', '#F59E0B', '#EC4899', '#8B5CF6'];
+      const colors = ['#10B981', '#059669', '#7C3AED', '#38BDF8', '#F59E0B', '#EC4899', '#8B5CF6'];
 
       for (let i = 0; i < count; i++) {
         pieces.push({
@@ -4721,6 +4802,9 @@
         }
         if (project.googlePlay) {
           linksHtml += `<a href="${project.googlePlay}" target="_blank" rel="noopener" class="store-btn"><svg viewBox="0 0 512 512" width="22" height="22" style="vertical-align:middle;margin-right:6px"><path fill="#4285F4" d="M48.7 13.7C37.3 25.8 30.6 44.7 30.6 68.7v374.6c0 24 6.7 42.9 18.1 55l2.8 2.8 214.2-214.2v-5.8L51.5 66.9l-2.8-53.2z"/><path fill="#FBBC05" d="M337.8 335l-72.1-72.1v-5.8l72.1-72.1 1.7 1 85.3 48.5c24.3 13.8 24.3 36.4 0 50.2l-87 50.3z"/><path fill="#EA4335" d="M339.5 334L265.7 260 51.5 474.2c8 8.5 21.2 9.5 36.1 1.1l251.9-141.3z"/><path fill="#34A853" d="M339.5 178L87.6 36.7C72.7 28.3 59.5 29.3 51.5 37.8L265.7 252l73.8-74z"/></svg> Google Play</a>`;
+        }
+        if (project.comingSoon) {
+          linksHtml += `<span class="store-btn store-btn-soon">🚀 ${isAr ? 'قريباً على App Store و Google Play' : 'Coming Soon to App Store & Google Play'}</span>`;
         }
         if (project.web) {
           linksHtml += `<a href="${project.web}" target="_blank" rel="noopener" class="store-btn">🏢 ${isAr ? 'تفاصيل المنتج' : 'Product Info'}</a>`;
